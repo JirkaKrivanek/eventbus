@@ -312,7 +312,7 @@ public class MultiThreadedTests {
     private static final int MESS_MAX_COUNT_PER_GEN_THREAD = 10;
     private static final int MESS_MAX_GEN_DELAY_MS         = 1;
 
-    private Random mRandom = new Random();
+    private final Random mRandom = new Random();
 
     private int            mMessCount;
     private CountDownLatch mMessCountDown;
@@ -339,7 +339,7 @@ public class MultiThreadedTests {
 
     private static class MessEventA {
 
-        private MessBusThread mMessBusThread;
+        private final MessBusThread mMessBusThread;
 
         public MessEventA(MessBusThread messBusThread) {
             mMessBusThread = messBusThread;
@@ -353,7 +353,7 @@ public class MultiThreadedTests {
 
     private static class MessEventB {
 
-        private MessBusThread mMessBusThread;
+        private final MessBusThread mMessBusThread;
 
         public MessEventB(MessBusThread messBusThread) {
             mMessBusThread = messBusThread;
@@ -367,7 +367,7 @@ public class MultiThreadedTests {
 
     private static class MessEventC {
 
-        private MessBusThread mMessBusThread;
+        private final MessBusThread mMessBusThread;
 
         public MessEventC(MessBusThread messBusThread) {
             mMessBusThread = messBusThread;
@@ -381,9 +381,9 @@ public class MultiThreadedTests {
 
     public class MessGenThread extends Thread {
 
-        private Bus           mBus;
-        private int           mCount;
-        private MessBusThread mMessBusThread;
+        private final Bus           mBus;
+        private       int           mCount;
+        private final MessBusThread mMessBusThread;
 
         public MessGenThread(Bus bus, MessBusThread messBusThread, int numberOfEventsToProduce) {
             super();
@@ -400,12 +400,10 @@ public class MultiThreadedTests {
             mTotalThreadsCount.incrementAndGet();
             while (mCount > 0) {
                 mCount--;
-                if (MESS_MAX_GEN_DELAY_MS > 0) {
-                    try {
-                        Thread.sleep(randomCount(MESS_MAX_GEN_DELAY_MS));
-                    } catch (InterruptedException e) {
-                        break;
-                    }
+                try {
+                    Thread.sleep(randomCount(MESS_MAX_GEN_DELAY_MS));
+                } catch (InterruptedException e) {
+                    break;
                 }
                 switch (randomCount(3)) {
                     case 1:

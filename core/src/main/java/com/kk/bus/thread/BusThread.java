@@ -18,7 +18,7 @@ import java.util.Queue;
 public class BusThread extends Thread {
 
     private static final int MAX_POOL_SIZE = 100;
-    private Bus mBus;
+    private final Bus mBus;
     private final Queue<BusThreadEvent> mEventsQueue = new LinkedList<>();
     private final Queue<BusThreadEvent> mEventsPool  = new LinkedList<>();
     private final DeliveryContextThread mDeliveryContextThread;
@@ -100,7 +100,7 @@ public class BusThread extends Thread {
     /**
      * Deinitializes th thread from bus.
      */
-    protected void done() {
+    void done() {
         mBus.unregister(this);
         DeliveryContextManagerThread.clearDeliveryContext();
     }
@@ -110,7 +110,7 @@ public class BusThread extends Thread {
      *
      * @throws InterruptedException
      */
-    protected void handleOrWait() throws InterruptedException {
+    void handleOrWait() throws InterruptedException {
         while (!isInterrupted()) {
             BusThreadEvent event;
             synchronized (this) {
@@ -128,9 +128,8 @@ public class BusThread extends Thread {
      * Tries to handle one event posted to this thread.
      *
      * @return If the event was handled then {@code true} else {@code false}.
-     * @throws InterruptedException
      */
-    protected boolean tryToHandle() throws InterruptedException {
+    protected boolean tryToHandle() {
         BusThreadEvent event;
         synchronized (this) {
             event = mEventsQueue.poll();
@@ -145,7 +144,7 @@ public class BusThread extends Thread {
     /**
      * Handles events posted to this thread until terminated.
      */
-    protected void loop() {
+    void loop() {
         while (!isInterrupted()) {
             try {
                 handleOrWait();

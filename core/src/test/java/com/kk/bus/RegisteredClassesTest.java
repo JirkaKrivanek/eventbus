@@ -13,7 +13,7 @@ public class RegisteredClassesTest {
     private RegisteredClasses mRegisteredClasses;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         mRegisteredClasses = new RegisteredClasses();
     }
 
