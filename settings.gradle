@@ -1,0 +1,3 @@
+rootProject.name = 'EventBusGradle'
+
+include ':core'
