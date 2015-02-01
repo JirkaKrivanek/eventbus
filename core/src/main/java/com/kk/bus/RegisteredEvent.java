@@ -68,6 +68,8 @@ class RegisteredEvent {
      */
     void post(Object event) {
         Collection<EventDeliverer> eventDeliverers;
+        // The synchronized copy of the object methods is here to avoid the concurrency issues
+        // TODO: It is perfectly safe but pretty ineffective: Think out better solution
         synchronized (this) {
             eventDeliverers = new ArrayList<>(mObjectMethodsMap.values());
         }
