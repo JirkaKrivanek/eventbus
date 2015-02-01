@@ -44,7 +44,7 @@ public class BasicSubscriberTests {
         }
 
         @Override
-        public boolean isCurrentDeliveryContext(TestDeliveryContext deliveryContext) {
+        public boolean isCurrentDeliveryContext(DeliveryContext deliveryContext) {
             return deliveryContext == mDeliveryContext;
         }
     }

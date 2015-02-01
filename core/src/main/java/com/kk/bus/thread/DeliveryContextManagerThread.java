@@ -1,6 +1,7 @@
 package com.kk.bus.thread;
 
 
+import com.kk.bus.DeliveryContext;
 import com.kk.bus.DeliveryContextManager;
 import com.kk.bus.DeliveryContextManagers;
 
@@ -52,7 +53,7 @@ class DeliveryContextManagerThread implements DeliveryContextManager<DeliveryCon
      * {@inheritDoc}
      */
     @Override
-    public boolean isCurrentDeliveryContext(DeliveryContextThread deliveryContext) {
+    public boolean isCurrentDeliveryContext(DeliveryContext deliveryContext) {
         return deliveryContext == sThreadDeliveryContext.get();
     }
 }
