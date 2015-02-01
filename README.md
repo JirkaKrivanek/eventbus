@@ -14,3 +14,9 @@ The planned features are:
 The documentation will be added as soon as the development finishes ;)
 
 Until that, please see the JavaDocs...
+
+## Build system and development IDE
+
+I like and use IntelliJ IDEA so the project is maintained in it.
+
+The project, however, can be built by Gradle w/o any IDE. I am still learning Gradle so the build will be slowly improved...
