@@ -94,7 +94,7 @@ public class EventDeliverer {
      * @param event
      *         The event to pass to the methods.
      * @throws java.lang.reflect.InvocationTargetException
-     *         When the method invocation failed.
+     *         When the method invocation failed also for the security reason (hack).
      */
     synchronized void callMethods(Object event) throws InvocationTargetException {
         if (mObject != null && mMethods != null) {
@@ -102,12 +102,7 @@ public class EventDeliverer {
                 try {
                     method.invoke(mObject, event);
                 } catch (IllegalAccessException e) {
-                    throw new AssertionError(e); // TODO: Find better solution (this is a brutal hack which suppresses the need for thrown exception declaration)
-                } catch (InvocationTargetException e) {
-                    if (e.getCause() instanceof Error) {
-                        throw (Error) e.getCause();
-                    }
-                    throw e;
+                    throw new InvocationTargetException(e); // Not really nice but effective
                 }
             }
         }
