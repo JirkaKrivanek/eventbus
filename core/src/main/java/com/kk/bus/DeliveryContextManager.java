@@ -35,5 +35,5 @@ public interface DeliveryContextManager<T extends DeliveryContext> {
      *         The delivery context to check whether it is the current one.
      * @return If the specified delivery context is the current one then {@code true} else {@code false}.
      */
-    abstract boolean isCurrentDeliveryContext(T deliveryContext);
+    abstract boolean isCurrentDeliveryContext(DeliveryContext deliveryContext);
 }
