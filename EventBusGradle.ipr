@@ -52,6 +52,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/awtTest" />
             <option value="$PROJECT_DIR$/core" />
           </set>
         </option>
@@ -196,6 +197,13 @@
       </item>
     </group>
   </component>
+  <component name="ProjectDictionaryState">
+    <dictionary name="kk">
+      <words>
+        <w>intelli</w>
+      </words>
+    </dictionary>
+  </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
     <OptionsSetting value="true" id="Remove" />
@@ -209,6 +217,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/EventBusGradle.iml" filepath="$PROJECT_DIR$/EventBusGradle.iml" />
+      <module fileurl="file://$PROJECT_DIR$/awt/awt.iml" filepath="$PROJECT_DIR$/awt/awt.iml" />
+      <module fileurl="file://$PROJECT_DIR$/awtDemo/awtDemo.iml" filepath="$PROJECT_DIR$/awtDemo/awtDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/awtTest/awtTest.iml" filepath="$PROJECT_DIR$/awtTest/awtTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
     </modules>
   </component>
@@ -303,6 +314,15 @@
       <JAVADOC />
       <SOURCES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.beust/jcommander/1.27/fae697ac46477a5227a5ee14f8f3a1270a4627b0/jcommander-1.27-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Gradle: junit:junit:4.11">
+      <CLASSES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/junit/junit/4.11/4e031bb61df09069aeb2bffb4019e7a5034a4ee0/junit-4.11.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/junit/junit/4.11/28e0ad201304e4a4abf999ca0570b7cffc352c3c/junit-4.11-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Gradle: junit:junit:4.12">

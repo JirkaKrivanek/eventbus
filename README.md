@@ -9,7 +9,7 @@ The planned features are:
 - Multi threading support with delivering on the same thread which registered - done
 - Timed events posting with repeated and cancel option
 - Android main UI thread support
-- AWT main loop support
+- AWT main loop support - done
 
 The documentation will be added as soon as the development finishes ;)
 
