@@ -4,4 +4,4 @@ include ':core'
 include ':awt'
 include ':awtDemo'
 include ':android'
-
+include ':androidDemo'
