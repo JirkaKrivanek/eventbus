@@ -1,4 +1,4 @@
-package com.gemalto.tests.androideventbus;
+package com.kk.bus.android.demo;
 
 import com.kk.bus.Bus;
 import com.kk.bus.DeliveryContextManagers;

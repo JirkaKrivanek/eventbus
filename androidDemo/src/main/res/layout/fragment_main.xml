@@ -11,8 +11,8 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/buttonStart"
-        android:id="@+id/buttonStart"
+        android:text="@string/buttonPost"
+        android:id="@+id/buttonPost"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"/>
@@ -24,6 +24,6 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="---"
         android:id="@+id/textView"
-        android:layout_below="@+id/buttonStart"
+        android:layout_below="@+id/buttonPost"
         android:layout_centerHorizontal="true"/>
 </RelativeLayout>
