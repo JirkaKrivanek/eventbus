@@ -77,4 +77,7 @@ class RegisteredEvent {
             registeredEventObjectContext.deliverEvent(event);
         }
     }
+
+    public void callAllProducers(Object onThisObjectOnly) {
+    }
 }

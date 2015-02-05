@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Retrieves and maintains the annotated subscriber and producer methods for the specified class.
+ * Retrieves and maintains the annotated subscriber and producer methods for the specified class - AKA the registered
+ * class descriptor.
  *
  * @author Jiri Krivanek
  */
@@ -141,15 +142,19 @@ class RegisteredClass {
     }
 
     /**
-     * Retrieves the producer method for the specified event class.
+     * Retrieves the producer method for the specified event class or its any subclass.
      *
-     * @param forClass
-     *         The class for which the producer method has to be retrieved.
+     * @param forClassOrAnySubclass
+     *         The class or its any subclass for which the producer method has to be retrieved.
      * @return The producer method or {@code null} if no such producer exists.
      */
-    Method getProducerMethod(Class<?> forClass) {
+    Method getProducerMethod(Class<?> forClassOrAnySubclass) {
         if (mProducerMethods != null) {
-            return mProducerMethods.get(forClass);
+            for (Class<?> clazz : mProducerMethods.keySet()) {
+                if (forClassOrAnySubclass.isAssignableFrom(clazz)) {
+                    return mProducerMethods.get(clazz);
+                }
+            }
         }
         return null;
     }

@@ -51,11 +51,19 @@ class RegisteredEvents {
                     }
                 }
                 registeredEvent.register(objectToRegister, registeredClass.getSubscribedMethods(eventClass));
+                registeredEvent.callAllProducers(objectToRegister);
+            }
+            // Call producers of all other registered objects
+            // But only those producing any event which this class is registered for
+            // Taking the event inheritance into account
+            // And yes, potentially producing also for the currently being registered class
+            for (Class<?> eventClass : subscribedEvents) {
+                List<RegisteredClass> registeredClasses = mRegisteredClasses.getRegisteredClassesProducingEvent(
+                        eventClass);
+                for (RegisteredClass rc : registeredClasses) {
+                }
             }
         }
-
-        // Call all the producers of the registered class now
-        // Call producers of all other registered methods but only those producing any method which this class is registered for
     }
 
     /**
@@ -91,27 +99,16 @@ class RegisteredEvents {
      *         The event object to post.
      */
     void post(Object event) {
-        List<RegisteredEvent> registeredEvents = getRegisteredEvents(event);
+        List<RegisteredEvent> registeredEvents = new ArrayList<>();
+        synchronized (this) {
+            for (Class<?> clazz : mRegisteredEvents.keySet()) {
+                if (clazz.isInstance(event)) {
+                    registeredEvents.add(mRegisteredEvents.get(clazz));
+                }
+            }
+        }
         for (RegisteredEvent registeredEvent : registeredEvents) {
             registeredEvent.post(event);
         }
-    }
-
-    /**
-     * Retrieves the list of registered event object for the specified object. The object class must equal or inherit
-     * from the registered class.
-     *
-     * @param forObject
-     *         The object for which the list of registered events has to be returned.
-     * @return The list of registered events.
-     */
-    private synchronized List<RegisteredEvent> getRegisteredEvents(Object forObject) {
-        List<RegisteredEvent> ret = new ArrayList<>();
-        for (Class<?> clazz : mRegisteredEvents.keySet()) {
-            if (clazz.isInstance(forObject)) {
-                ret.add(mRegisteredEvents.get(clazz));
-            }
-        }
-        return ret;
     }
 }
