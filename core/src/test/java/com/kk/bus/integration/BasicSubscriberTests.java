@@ -174,6 +174,166 @@ public class BasicSubscriberTests {
         assertEquals(0, subscriberB.eventCount);
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    private static class NormalDeliveryEventAA extends NormalDeliveryEventA {}
+
+
+    private static class NormalDeliveryEventAAA extends NormalDeliveryEventAA {}
+
+
+    private static class NormalDeliveryEventAB extends NormalDeliveryEventA {}
+
+
+    private static class NormalDeliveryEventAC extends NormalDeliveryEventA {}
+
+
+    private static class NormalDeliveryEventBA extends NormalDeliveryEventB {}
+
+
+    private static class NormalDeliveryEventBB extends NormalDeliveryEventB {}
+
+
+    private static class NormalDeliveryEventBBB extends NormalDeliveryEventBB {}
+
+
+    private static class NormalDeliveryEventBBBB extends NormalDeliveryEventBBB {}
+
+
+    private static class NormalDeliveryEventBC extends NormalDeliveryEventB {}
+
+
+    public static class NormalDeliverySubscriberInheritance {
+
+        int eventCountA;
+        int eventCountAA;
+        int eventCountAAA;
+        int eventCountAB;
+        int eventCountAC;
+        int eventCountB;
+        int eventCountBA;
+        int eventCountBB;
+        int eventCountBBB;
+        int eventCountBBBB;
+        int eventCountBC;
+        int eventCountC;
+
+        void clearAllCounters() {
+            eventCountA = eventCountAA = eventCountAAA = eventCountAB = eventCountAC = eventCountB = eventCountBA = eventCountBB = eventCountBBB = eventCountBBBB = eventCountBC = eventCountC = 0;
+        }
+
+        @Subscribe
+        public void onEventA(NormalDeliveryEventA event) {
+            eventCountA++;
+        }
+
+        @Subscribe
+        public void onEventAA(NormalDeliveryEventAA event) {
+            eventCountAA++;
+        }
+
+        @Subscribe
+        public void onEventAAA(NormalDeliveryEventAAA event) {
+            eventCountAAA++;
+        }
+
+        @Subscribe
+        public void onEventAB(NormalDeliveryEventAB event) {
+            eventCountAB++;
+        }
+
+        @Subscribe
+        public void onEventAC(NormalDeliveryEventAC event) {
+            eventCountAC++;
+        }
+
+        @Subscribe
+        public void onEventB(NormalDeliveryEventB event) {
+            eventCountB++;
+        }
+
+        @Subscribe
+        public void onEventBA(NormalDeliveryEventBA event) {
+            eventCountBA++;
+        }
+
+        @Subscribe
+        public void onEventBB(NormalDeliveryEventBB event) {
+            eventCountBB++;
+        }
+
+        @Subscribe
+        public void onEventBBB(NormalDeliveryEventBBB event) {
+            eventCountBBB++;
+        }
+
+        @Subscribe
+        public void onEventBBBB(NormalDeliveryEventBBBB event) {
+            eventCountBBBB++;
+        }
+
+        @Subscribe
+        public void onEventBC(NormalDeliveryEventBC event) {
+            eventCountBC++;
+        }
+
+        @Subscribe
+        public void onEventC(NormalDeliveryEventC event) {
+            eventCountC++;
+        }
+    }
+
+    @Test
+    public void inheritedEvents() {
+        // Prepare
+        NormalDeliverySubscriberInheritance subscriber = new NormalDeliverySubscriberInheritance();
+        mBus.register(subscriber);
+        // Clear counters
+        subscriber.clearAllCounters();
+        // Deliver each (well intentionally do not post some events) event twice
+        mBus.post(new NormalDeliveryEventA());
+        mBus.post(new NormalDeliveryEventAA());
+        mBus.post(new NormalDeliveryEventAAA());
+        mBus.post(new NormalDeliveryEventAB());
+        mBus.post(new NormalDeliveryEventAC());
+        mBus.post(new NormalDeliveryEventB());
+        mBus.post(new NormalDeliveryEventBA());
+        mBus.post(new NormalDeliveryEventBB());
+        mBus.post(new NormalDeliveryEventBBBB());
+        mBus.post(new NormalDeliveryEventC());
+        //
+        mBus.post(new NormalDeliveryEventA());
+        mBus.post(new NormalDeliveryEventAA());
+        mBus.post(new NormalDeliveryEventAAA());
+        mBus.post(new NormalDeliveryEventAB());
+        mBus.post(new NormalDeliveryEventAC());
+        mBus.post(new NormalDeliveryEventB());
+        mBus.post(new NormalDeliveryEventBA());
+        mBus.post(new NormalDeliveryEventBB());
+        mBus.post(new NormalDeliveryEventBBBB());
+        mBus.post(new NormalDeliveryEventC());
+        // Check proper counts
+        assertEquals(10, subscriber.eventCountA);
+        assertEquals(4, subscriber.eventCountAA);
+        assertEquals(2, subscriber.eventCountAAA);
+        assertEquals(2, subscriber.eventCountAB);
+        assertEquals(2, subscriber.eventCountAC);
+        assertEquals(8, subscriber.eventCountB);
+        assertEquals(2, subscriber.eventCountBA);
+        assertEquals(4, subscriber.eventCountBB);
+        assertEquals(2, subscriber.eventCountBBBB);
+        assertEquals(2, subscriber.eventCountC);
+        // Cleanup
+        mBus.unregister(subscriber);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     @Test
     public void stress() {
         NormalDeliveryEventA eventA = new NormalDeliveryEventA();

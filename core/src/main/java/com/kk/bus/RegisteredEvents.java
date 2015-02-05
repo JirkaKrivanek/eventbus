@@ -1,7 +1,9 @@
 package com.kk.bus;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -51,6 +53,9 @@ class RegisteredEvents {
                 registeredEvent.register(objectToRegister, registeredClass.getSubscribedMethods(eventClass));
             }
         }
+
+        // Call all the producers of the registered class now
+        // Call producers of all other registered methods but only those producing any method which this class is registered for
     }
 
     /**
@@ -86,12 +91,27 @@ class RegisteredEvents {
      *         The event object to post.
      */
     void post(Object event) {
-        RegisteredEvent registeredEvent;
-        synchronized (this) {
-            registeredEvent = mRegisteredEvents.get(event.getClass());
-        }
-        if (registeredEvent != null) {
+        List<RegisteredEvent> registeredEvents = getRegisteredEvents(event);
+        for (RegisteredEvent registeredEvent : registeredEvents) {
             registeredEvent.post(event);
         }
+    }
+
+    /**
+     * Retrieves the list of registered event object for the specified object. The object class must equal or inherit
+     * from the registered class.
+     *
+     * @param forObject
+     *         The object for which the list of registered events has to be returned.
+     * @return The list of registered events.
+     */
+    private synchronized List<RegisteredEvent> getRegisteredEvents(Object forObject) {
+        List<RegisteredEvent> ret = new ArrayList<>();
+        for (Class<?> clazz : mRegisteredEvents.keySet()) {
+            if (clazz.isInstance(forObject)) {
+                ret.add(mRegisteredEvents.get(clazz));
+            }
+        }
+        return ret;
     }
 }
