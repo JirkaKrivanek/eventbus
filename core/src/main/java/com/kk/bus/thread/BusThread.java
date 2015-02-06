@@ -155,10 +155,12 @@ public class BusThread extends Thread {
     }
 
     /**
-     * Posts the event to be handled by the thread. And ensures the thread is awake.
+     * Subscriber variant: Posts the event to be handled by the thread. And ensures the thread is awaken.
      *
      * @param event
      *         The event to post.
+     * @param eventDeliverer
+     *         The object to be used to deliver the event.
      */
     synchronized void postEvent(Object event, EventDeliverer eventDeliverer) {
         BusThreadEvent busThreadEvent = mEventsPool.poll();
@@ -166,6 +168,21 @@ public class BusThread extends Thread {
             busThreadEvent = new BusThreadEvent();
         }
         busThreadEvent.set(event, eventDeliverer);
+        mEventsQueue.add(busThreadEvent);
+        notify();
+    }
+
+    /**
+     * Producer variant: Posts the event to be handled by the thread. And ensures the thread is awaken.
+     * @param eventDeliverer
+     *         The object to be used to deliver the event.
+     */
+    synchronized void postEvent(EventDeliverer eventDeliverer) {
+        BusThreadEvent busThreadEvent = mEventsPool.poll();
+        if (busThreadEvent == null) {
+            busThreadEvent = new BusThreadEvent();
+        }
+        busThreadEvent.set(eventDeliverer);
         mEventsQueue.add(busThreadEvent);
         notify();
     }

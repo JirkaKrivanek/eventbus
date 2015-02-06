@@ -5,7 +5,6 @@ import com.kk.bus.DeliveryContext;
 import com.kk.bus.EventDeliverer;
 
 import java.awt.EventQueue;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Delivery context for the java AWT dispatch thread.
@@ -18,15 +17,21 @@ public class DeliveryContextAwt extends DeliveryContext {
      * {@inheritDoc}
      */
     @Override
-    protected void deliverEvent(final Object event, final EventDeliverer eventDeliverer) {
+    protected void requestCallSubscriberMethods(final Object event, final EventDeliverer eventDeliverer) {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                try {
-                    callMethods(event, eventDeliverer);
-                } catch (InvocationTargetException e) {
-                    throw new RuntimeException(e); // Hack to hide the exception (dirty but sufficient here)
-                }
+                callSubscriberMethods(event, eventDeliverer);
+            }
+        });
+    }
+
+    @Override
+    protected void requestCallProducerMethod(final EventDeliverer eventDeliverer) {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                callProducerMethod(eventDeliverer);
             }
         });
     }

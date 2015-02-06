@@ -119,6 +119,20 @@ class RegisteredClass {
     }
 
     /**
+     * Retrieves the set of produced event classes.
+     * 
+     * TODO: New/changed method: Unit test needed!
+     *
+     * @return The set of produced event classes.
+     */
+    Set<Class<?>> getProducedEvents() {
+        if (mProducerMethods != null) {
+            return mProducerMethods.keySet();
+        }
+        return null;
+    }
+
+    /**
      * Retrieves the subscriber methods for specified event class.
      *
      * @param forClass
@@ -144,17 +158,35 @@ class RegisteredClass {
     /**
      * Retrieves the producer method for the specified event class or its any subclass.
      *
+     * TODO: New/changed method: Unit test needed!
+     *
      * @param forClassOrAnySubclass
      *         The class or its any subclass for which the producer method has to be retrieved.
      * @return The producer method or {@code null} if no such producer exists.
      */
-    Method getProducerMethod(Class<?> forClassOrAnySubclass) {
+    Method getProducerMethodForClassOrAnySubclass(Class<?> forClassOrAnySubclass) {
         if (mProducerMethods != null) {
             for (Class<?> clazz : mProducerMethods.keySet()) {
                 if (forClassOrAnySubclass.isAssignableFrom(clazz)) {
                     return mProducerMethods.get(clazz);
                 }
             }
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves the producer method exactly for the specified event class.
+     *
+     * TODO: New/changed method: Unit test needed!
+     *
+     * @param forClass
+     *         The class exactly for which the producer method has to be retrieved.
+     * @return The producer method or {@code null} if no such producer exists.
+     */
+    Method getProducerMethodForClassExactly(Class<?> forClass) {
+        if (mProducerMethods != null) {
+            return mProducerMethods.get(forClass);
         }
         return null;
     }

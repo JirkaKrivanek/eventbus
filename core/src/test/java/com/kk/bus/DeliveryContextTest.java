@@ -13,7 +13,11 @@ public class DeliveryContextTest {
     private static class TestDeliveryContext extends DeliveryContext {
 
         @Override
-        protected void deliverEvent(Object event, EventDeliverer eventDeliverer) {
+        protected void requestCallSubscriberMethods(Object event, EventDeliverer eventDeliverer) {
+        }
+
+        @Override
+        protected void requestCallProducerMethod(EventDeliverer eventDeliverer) {
         }
     }
 
@@ -25,15 +29,15 @@ public class DeliveryContextTest {
         TestDeliveryContext deliveryContext = new TestDeliveryContext();
         Event event = new Event();
         EventDeliverer eventDeliverer = mock(EventDeliverer.class);
-        deliveryContext.callMethods(event, eventDeliverer);
-        verify(eventDeliverer, times(1)).callMethods(event);
+        deliveryContext.callSubscriberMethods(event, eventDeliverer);
+        verify(eventDeliverer, times(1)).callSubscriberMethods(event);
     }
 
     @Test
     public void callMethods_eventNull_doesNotWork() throws Exception {
         TestDeliveryContext deliveryContext = new TestDeliveryContext();
         EventDeliverer eventDeliverer = mock(EventDeliverer.class);
-        deliveryContext.callMethods(null, eventDeliverer);
-        verify(eventDeliverer, never()).callMethods(null);
+        deliveryContext.callSubscriberMethods(null, eventDeliverer);
+        verify(eventDeliverer, never()).callSubscriberMethods(null);
     }
 }

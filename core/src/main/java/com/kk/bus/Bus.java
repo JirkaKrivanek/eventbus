@@ -23,7 +23,7 @@ public class Bus {
      *         The object to register to the event bus.
      */
     public void register(Object objectToRegister) {
-        mRegisteredEvents.register(objectToRegister);
+        mRegisteredEvents.register(this, objectToRegister);
     }
 
     /**

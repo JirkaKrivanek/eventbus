@@ -30,7 +30,7 @@ public class RegisteredEventsTest {
     public void register_noSubscribers_noException() {
         Register_NoSubscribers_NoException objectToRegister = new Register_NoSubscribers_NoException();
         RegisteredEvents registeredEvents = new RegisteredEvents();
-        registeredEvents.register(objectToRegister);
+        registeredEvents.register(null, objectToRegister);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,8 +44,8 @@ public class RegisteredEventsTest {
     public void register_duplicate_noException() {
         Register_NoSubscribers_Duplicate_NoException objectToRegister = new Register_NoSubscribers_Duplicate_NoException();
         RegisteredEvents registeredEvents = new RegisteredEvents();
-        registeredEvents.register(objectToRegister);
-        registeredEvents.register(objectToRegister);
+        registeredEvents.register(null, objectToRegister);
+        registeredEvents.register(null, objectToRegister);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ public class RegisteredEventsTest {
     public void register_subscribers_noException() {
         Register_Subscribers_NoException objectToRegister = new Register_Subscribers_NoException();
         RegisteredEvents registeredEvents = new RegisteredEvents();
-        registeredEvents.register(objectToRegister);
+        registeredEvents.register(null, objectToRegister);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,8 +83,8 @@ public class RegisteredEventsTest {
     public void register_subscribers_duplicate_noException() {
         Register_Subscribers_Duplicate_NoException objectToRegister = new Register_Subscribers_Duplicate_NoException();
         RegisteredEvents registeredEvents = new RegisteredEvents();
-        registeredEvents.register(objectToRegister);
-        registeredEvents.register(objectToRegister);
+        registeredEvents.register(null, objectToRegister);
+        registeredEvents.register(null, objectToRegister);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -123,7 +123,7 @@ public class RegisteredEventsTest {
     public void unregister_registered_noException() {
         Unregister_Registered_NoException objectToRegister = new Unregister_Registered_NoException();
         RegisteredEvents registeredEvents = new RegisteredEvents();
-        registeredEvents.register(objectToRegister);
+        registeredEvents.register(null, objectToRegister);
         registeredEvents.unregister(objectToRegister);
     }
 
@@ -143,7 +143,7 @@ public class RegisteredEventsTest {
     public void unregister_registered_duplicate_noException() {
         Unregister_Registered_Duplicate_NoException objectToRegister = new Unregister_Registered_Duplicate_NoException();
         RegisteredEvents registeredEvents = new RegisteredEvents();
-        registeredEvents.register(objectToRegister);
+        registeredEvents.register(null, objectToRegister);
         registeredEvents.unregister(objectToRegister);
         registeredEvents.unregister(objectToRegister);
     }
@@ -177,7 +177,7 @@ public class RegisteredEventsTest {
         EventA event = new EventA();
         Post_Registered_NoException objectToRegister = new Post_Registered_NoException();
         RegisteredEvents registeredEvents = new RegisteredEvents();
-        registeredEvents.register(objectToRegister);
+        registeredEvents.register(null, objectToRegister);
         registeredEvents.post(event);
         registeredEvents.post(event);
         registeredEvents.unregister(objectToRegister);

@@ -7,8 +7,6 @@ import android.os.Looper;
 import com.kk.bus.DeliveryContext;
 import com.kk.bus.EventDeliverer;
 
-import java.lang.reflect.InvocationTargetException;
-
 /**
  * Delivery context for the Android main UI thread.
  *
@@ -22,15 +20,24 @@ public class DeliveryContextAndroid extends DeliveryContext {
      * {@inheritDoc}
      */
     @Override
-    protected void deliverEvent(final Object event, final EventDeliverer eventDeliverer) {
+    protected void requestCallSubscriberMethods(final Object event, final EventDeliverer eventDeliverer) {
         sHandler.post(new Runnable() {
             @Override
             public void run() {
-                try {
-                    callMethods(event, eventDeliverer);
-                } catch (InvocationTargetException e) {
-                    throw new RuntimeException(e); // Dirty but effective hack to hide the exception
-                }
+                callSubscriberMethods(event, eventDeliverer);
+            }
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void requestCallProducerMethod(final EventDeliverer eventDeliverer) {
+        sHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                callProducerMethod(eventDeliverer);
             }
         });
     }

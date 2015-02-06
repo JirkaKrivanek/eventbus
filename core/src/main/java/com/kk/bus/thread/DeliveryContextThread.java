@@ -4,8 +4,6 @@ package com.kk.bus.thread;
 import com.kk.bus.DeliveryContext;
 import com.kk.bus.EventDeliverer;
 
-import java.lang.reflect.InvocationTargetException;
-
 /**
  * Delivery context for the bus thread.
  *
@@ -29,8 +27,16 @@ class DeliveryContextThread extends DeliveryContext {
      * {@inheritDoc}
      */
     @Override
-    protected void deliverEvent(Object event, EventDeliverer eventDeliverer) {
+    protected void requestCallSubscriberMethods(Object event, EventDeliverer eventDeliverer) {
         mBusThread.postEvent(event, eventDeliverer);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void requestCallProducerMethod(EventDeliverer eventDeliverer) {
+        mBusThread.postEvent(eventDeliverer);
     }
 
     /**
@@ -40,10 +46,13 @@ class DeliveryContextThread extends DeliveryContext {
      *         The bus thread event object carrying the event to deliver.
      */
     void callMethods(BusThreadEvent event) {
-        try {
-            callMethods(event.getEvent(), event.getEventDeliverer());
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
+        switch (event.getType()) {
+            case SUBSCRIBE:
+                callSubscriberMethods(event.getEvent(), event.getEventDeliverer());
+                break;
+            case PRODUCE:
+                callProducerMethod(event.getEventDeliverer());
+                break;
         }
     }
 }

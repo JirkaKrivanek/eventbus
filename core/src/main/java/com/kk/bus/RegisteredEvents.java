@@ -1,6 +1,7 @@
 package com.kk.bus;
 
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,11 +33,14 @@ class RegisteredEvents {
     /**
      * Registers the object to the bus.
      *
+     * @param bus
+     *         The bus object to be used to post the produced events.
      * @param objectToRegister
      *         The object to register to the bus.
      */
-    void register(Object objectToRegister) {
+    void register(Bus bus, Object objectToRegister) {
         RegisteredClass registeredClass = mRegisteredClasses.getRegisteredClass(objectToRegister, true);
+        DeliveryContext deliveryContext = DeliveryContextManagers.getCurrentDeliveryContext();
 
         // Registers subscriber methods
         Set<Class<?>> subscribedEvents = registeredClass.getSubscribedEvents();
@@ -50,18 +54,62 @@ class RegisteredEvents {
                         mRegisteredEvents.put(eventClass, registeredEvent);
                     }
                 }
-                registeredEvent.register(objectToRegister, registeredClass.getSubscribedMethods(eventClass));
-                registeredEvent.callAllProducers(objectToRegister);
+                Set<Method> subscriberMethods = registeredClass.getSubscribedMethods(eventClass);
+                registeredEvent.register(bus, objectToRegister, subscriberMethods, deliveryContext);
             }
             // Call producers of all other registered objects
-            // But only those producing any event which this class is registered for
+            // But only those producing any event which this class is subscribed for
             // Taking the event inheritance into account
-            // And yes, potentially producing also for the currently being registered class
+            List<RegisteredEvent> registeredEvents = new ArrayList<>();
             for (Class<?> eventClass : subscribedEvents) {
-                List<RegisteredClass> registeredClasses = mRegisteredClasses.getRegisteredClassesProducingEvent(
-                        eventClass);
-                for (RegisteredClass rc : registeredClasses) {
+                synchronized (this) {
+                    for (Class<?> clazz : mRegisteredEvents.keySet()) {
+                        if (eventClass.isAssignableFrom(clazz)) {
+                            registeredEvents.add(mRegisteredEvents.get(clazz));
+                        }
+                    }
                 }
+            }
+            for (RegisteredEvent registeredEvent : registeredEvents) {
+                registeredEvent.callProducers(subscribedEvents, objectToRegister);
+            }
+        }
+
+        // Register producer methods
+        Set<Class<?>> producedEvents = registeredClass.getProducedEvents();
+        if (producedEvents != null) {
+            for (Class<?> eventClass : producedEvents) {
+                RegisteredEvent registeredEvent;
+                synchronized (this) {
+                    registeredEvent = mRegisteredEvents.get(eventClass);
+                    if (registeredEvent == null) {
+                        registeredEvent = new RegisteredEvent();
+                        mRegisteredEvents.put(eventClass, registeredEvent);
+                    }
+                }
+                Method producerMethod = registeredClass.getProducerMethodForClassExactly(eventClass);
+                registeredEvent.register(bus, objectToRegister, producerMethod, deliveryContext);
+                // TODO: Optimize this: Only the producers of events which are subscribed by someone should be called (not all)
+                registeredEvent.callProducer(objectToRegister);
+            }
+        }
+
+        // Call producers
+        // - from all registered objects except the currently being registered one
+        // - for all event classes subscribed by the currently being registered one
+        if (subscribedEvents != null) {
+            List<RegisteredEvent> registeredEvents = new ArrayList<>();
+            for (Class<?> eventClass : subscribedEvents) {
+                synchronized (this) {
+                    for (Class<?> clazz : mRegisteredEvents.keySet()) {
+                        if (eventClass.isAssignableFrom(clazz)) {
+                            registeredEvents.add(mRegisteredEvents.get(clazz));
+                        }
+                    }
+                }
+            }
+            for (RegisteredEvent registeredEvent : registeredEvents) {
+                registeredEvent.callProducers(subscribedEvents, objectToRegister);
             }
         }
     }

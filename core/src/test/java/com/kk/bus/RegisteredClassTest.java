@@ -455,7 +455,7 @@ public class RegisteredClassTest {
     public void testClassProducerEventA() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassProducerEventA.class);
         assertTrue(registeredClass.hasAnyProducers());
-        assertNotNull(registeredClass.getProducerMethod(EventA.class));
+        assertNotNull(registeredClass.getProducerMethodForClassOrAnySubclass(EventA.class));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -478,7 +478,7 @@ public class RegisteredClassTest {
     public void testClassProducerEventFA() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassProducerEventFA.class);
         assertTrue(registeredClass.hasAnyProducers());
-        assertNotNull(registeredClass.getProducerMethod(EventA.class));
+        assertNotNull(registeredClass.getProducerMethodForClassOrAnySubclass(EventA.class));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -503,8 +503,8 @@ public class RegisteredClassTest {
     public void testClassProducerEventAB() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassProducerEventAB.class);
         assertTrue(registeredClass.hasAnyProducers());
-        assertNotNull(registeredClass.getProducerMethod(EventA.class));
-        assertNotNull(registeredClass.getProducerMethod(EventB.class));
+        assertNotNull(registeredClass.getProducerMethodForClassOrAnySubclass(EventA.class));
+        assertNotNull(registeredClass.getProducerMethodForClassOrAnySubclass(EventB.class));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -532,8 +532,8 @@ public class RegisteredClassTest {
     public void testClassProducerEventFAB() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassProducerEventFAB.class);
         assertTrue(registeredClass.hasAnyProducers());
-        assertNotNull(registeredClass.getProducerMethod(EventA.class));
-        assertNotNull(registeredClass.getProducerMethod(EventB.class));
+        assertNotNull(registeredClass.getProducerMethodForClassOrAnySubclass(EventA.class));
+        assertNotNull(registeredClass.getProducerMethodForClassOrAnySubclass(EventB.class));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

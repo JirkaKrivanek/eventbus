@@ -32,13 +32,17 @@ public class EventDelivererTest {
         private EventDeliverer mEventDeliverer;
 
         @Override
-        protected void deliverEvent(Object event, EventDeliverer eventDeliverer) {
+        protected void requestCallSubscriberMethods(Object event, EventDeliverer eventDeliverer) {
             mEvent = event;
             mEventDeliverer = eventDeliverer;
         }
 
+        @Override
+        protected void requestCallProducerMethod(EventDeliverer eventDeliverer) {
+        }
+
         public void callNow() throws InvocationTargetException {
-            callMethods(mEvent, mEventDeliverer);
+            callSubscriberMethods(mEvent, mEventDeliverer);
         }
     }
 
@@ -47,12 +51,11 @@ public class EventDelivererTest {
         EventSubscriber eventSubscriber = new EventSubscriber();
         RegisteredClass registeredClass = new RegisteredClass(eventSubscriber.getClass());
         DeliveryContextTest deliveryContextTest = new DeliveryContextTest();
-        EventDeliverer eventDeliverer = new EventDeliverer(eventSubscriber,
-                                                           registeredClass.getSubscribedMethods(Event.class),
-                                                           deliveryContextTest);
+        EventDeliverer eventDeliverer = new EventDeliverer(null, eventSubscriber, deliveryContextTest);
+        eventDeliverer.setSubscriberMethods(registeredClass.getSubscribedMethods(Event.class));
         Event event = new Event();
         mDeliveredEvent = null;
-        eventDeliverer.deliverEvent(event);
+        eventDeliverer.requestCallSubscriberMethods(event);
         assertNull(mDeliveredEvent);
         deliveryContextTest.callNow();
         assertNotNull(mDeliveredEvent);
@@ -64,13 +67,12 @@ public class EventDelivererTest {
         EventSubscriber eventSubscriber = new EventSubscriber();
         RegisteredClass registeredClass = new RegisteredClass(eventSubscriber.getClass());
         DeliveryContextTest deliveryContextTest = new DeliveryContextTest();
-        EventDeliverer eventDeliverer = new EventDeliverer(eventSubscriber,
-                                                           registeredClass.getSubscribedMethods(Event.class),
-                                                           deliveryContextTest);
+        EventDeliverer eventDeliverer = new EventDeliverer(null, eventSubscriber, deliveryContextTest);
+        eventDeliverer.setSubscriberMethods(registeredClass.getSubscribedMethods(Event.class));
         Event event = new Event();
         mDeliveredEvent = null;
         eventDeliverer.clearOut();
-        eventDeliverer.deliverEvent(event);
+        eventDeliverer.requestCallSubscriberMethods(event);
         assertNull(mDeliveredEvent);
         deliveryContextTest.callNow();
         assertNull(mDeliveredEvent);
@@ -81,12 +83,11 @@ public class EventDelivererTest {
         EventSubscriber eventSubscriber = new EventSubscriber();
         RegisteredClass registeredClass = new RegisteredClass(eventSubscriber.getClass());
         DeliveryContextTest deliveryContextTest = new DeliveryContextTest();
-        EventDeliverer eventDeliverer = new EventDeliverer(eventSubscriber,
-                                                           registeredClass.getSubscribedMethods(Event.class),
-                                                           deliveryContextTest);
+        EventDeliverer eventDeliverer = new EventDeliverer(null, eventSubscriber, deliveryContextTest);
+        eventDeliverer.setSubscriberMethods(registeredClass.getSubscribedMethods(Event.class));
         Event event = new Event();
         mDeliveredEvent = null;
-        eventDeliverer.deliverEvent(event);
+        eventDeliverer.requestCallSubscriberMethods(event);
         assertNull(mDeliveredEvent);
         eventDeliverer.clearOut();
         deliveryContextTest.callNow();

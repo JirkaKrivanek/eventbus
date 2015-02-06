@@ -11,10 +11,7 @@ import com.kk.bus.Subscribe;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.reflect.InvocationTargetException;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class BasicSubscriberTests {
 
@@ -24,12 +21,12 @@ public class BasicSubscriberTests {
     private static class TestDeliveryContext extends DeliveryContext {
 
         @Override
-        protected void deliverEvent(Object event, EventDeliverer eventDeliverer) {
-            try {
-                callMethods(event, eventDeliverer);
-            } catch (InvocationTargetException e) {
-                assertTrue(e.getMessage(), false);
-            }
+        protected void requestCallSubscriberMethods(Object event, EventDeliverer eventDeliverer) {
+            callSubscriberMethods(event, eventDeliverer);
+        }
+
+        @Override
+        protected void requestCallProducerMethod(EventDeliverer eventDeliverer) {
         }
     }
 

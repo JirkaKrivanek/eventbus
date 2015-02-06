@@ -1,10 +1,7 @@
 package com.kk.bus;
 
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,24 +32,5 @@ class RegisteredClasses {
             mRegisteredClassMap.put(classToRegister, registeredClass);
         }
         return registeredClass;
-    }
-
-    /**
-     * Retrieves the registered classes producing the specified events, taking the events inheritance into account.
-     *
-     * @param eventClass
-     *         The event class or any subclass to be produced.
-     * @return The list of registered classes. TODO: Optimize this: We already have the method to call to do the
-     * production but later we will look for it again!
-     */
-    synchronized List<RegisteredClass> getRegisteredClassesProducingEvent(Class<?> eventClass) {
-        List<RegisteredClass> registeredClasses = new ArrayList<>();
-        for (Map.Entry<Class<?>, RegisteredClass> entry : mRegisteredClassMap.entrySet()) {
-            Method method = entry.getValue().getProducerMethod(eventClass);
-            if (method != null) {
-                registeredClasses.add(entry.getValue());
-            }
-        }
-        return registeredClasses;
     }
 }

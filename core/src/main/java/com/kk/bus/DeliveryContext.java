@@ -1,8 +1,6 @@
 package com.kk.bus;
 
 
-import java.lang.reflect.InvocationTargetException;
-
 /**
  * Interface of the event delivery context.
  * <p/>
@@ -17,32 +15,60 @@ import java.lang.reflect.InvocationTargetException;
 public abstract class DeliveryContext {
 
     /**
-     * To be implemented by som subclass in order to defer the call to the context carried by the second parameter See
-     * the {@link EventDeliverer#getDeliveryContext()} method.
+     * Requests the call of the subscriber methods deferred by this delivery context.
+     * <p/>
+     * See also the {@link EventDeliverer#getDeliveryContext()} method.
      *
      * @param event
      *         The event to deliver.
      * @param eventDeliverer
      *         The object carrying the context through which the event has to be delivered.
      */
-    protected abstract void deliverEvent(Object event, EventDeliverer eventDeliverer);
+    protected abstract void requestCallSubscriberMethods(Object event, EventDeliverer eventDeliverer);
 
     /**
-     * Performs the call of the methods.
+     * Requests the call of the producer method deferred by this delivery context.
+     * <p/>
+     * See also the {@link EventDeliverer#getDeliveryContext()} method.
+     *
+     * @param eventDeliverer
+     *         The object carrying the context through which the event has to be delivered.
+     */
+    protected abstract void requestCallProducerMethod(EventDeliverer eventDeliverer);
+
+    /**
+     * Performs the call of the subscriber methods.
      * <p/>
      * <dl><dt><b>Attention:</b></dt><dd>The subclass <b>MUST</b> ensure that this method is called on the delivery
-     * context  carried by the second parameter See the {@link EventDeliverer#getDeliveryContext()} method.</dd></dl>
+     * context carried by the second parameter.
+     *
+     * See the {@link EventDeliverer#getDeliveryContext()} method.</dd></dl>
      *
      * @param event
      *         The event to deliver.
      * @param eventDeliverer
      *         The object carrying the target object and its methods to be invoked.
-     * @throws java.lang.reflect.InvocationTargetException
-     *         When there is any error in invoking the method.
      */
-    protected void callMethods(Object event, EventDeliverer eventDeliverer) throws InvocationTargetException {
+    protected void callSubscriberMethods(Object event, EventDeliverer eventDeliverer) {
         if (eventDeliverer != null && event != null) { // Defense
-            eventDeliverer.callMethods(event);
+            eventDeliverer.callSubscriberMethods(event);
+        }
+    }
+
+    /**
+     * Performs the call of the producer method.
+     * <p/>
+     * <dl><dt><b>Attention:</b></dt><dd>The subclass <b>MUST</b> ensure that this method is called on the delivery
+     * context carried by the parameter.
+     *
+     * See the {@link EventDeliverer#getDeliveryContext()} method.</dd></dl>
+     *
+     * @param eventDeliverer
+     *         The object carrying the target object and its methods to be invoked.
+     */
+    protected void callProducerMethod(EventDeliverer eventDeliverer) {
+        if (eventDeliverer != null) { // Defense
+            eventDeliverer.callProducerMethod();
         }
     }
 }
