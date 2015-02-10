@@ -3,6 +3,7 @@ package com.kk.bus;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -124,10 +125,13 @@ public class EventDeliverer {
      * Requests the call of the producer method upon the registered object via the delivery context.
      * <p/>
      * It is intentionally synchronized to prevent the race with the {@link #clearOut()} method.
+     *
+     * @param subscriberDeliverers
+     *         The subscriber deliverers which should be used as soon as the event is produced.
      */
-    synchronized void requestCallProducerMethod() {
+    synchronized void requestCallProducerMethod(List<EventDeliverer> subscriberDeliverers) {
         if (mDeliveryContext != null) {
-            mDeliveryContext.requestCallProducerMethod(this);
+            mDeliveryContext.requestCallProducerMethod(this, subscriberDeliverers);
         }
     }
 
@@ -157,19 +161,53 @@ public class EventDeliverer {
     }
 
     /**
+     * Checks whether this object has assigned the subscriber methods.
+     *
+     * @return If it has the subscriber methods then {@code true} else {@code false}.
+     */
+    synchronized boolean hasSubscriberMethods() {
+        return mSubscriberMethods != null && mSubscriberMethods.size() > 0;
+    }
+
+    /**
+     * Checks whether this object has assigned the producer method.
+     *
+     * @return If it has the producer method then {@code true} else {@code false}.
+     */
+    synchronized boolean hasProducerMethod() {
+        return mProducerMethod != null;
+    }
+
+    /**
+     * Checks whether this object has assigned the specified registered object.
+     *
+     * @param registeredObject
+     *         The registered object to check.
+     * @return If it has the specified registered object then {@code true} else {@code false}.
+     */
+    synchronized boolean hasRegisteredObject(Object registeredObject) {
+        return mObject == registeredObject;
+    }
+
+    /**
      * Performs the call to the producer method of the object.
      * <p/>
      * It is sure the call is made on the correct delivery context (thread) - i.e. the one which called the {@link
      * Bus#register(Object)} method.
      * <p/>
      * It is intentionally synchronized to prevent the race with the {@link #clearOut()} method.
+     *
+     * @param subscriberDeliverers
+     *         The subscriber deliverers which should be used as soon as the event is produced.
      */
-    synchronized void callProducerMethod() {
-        if (mObject != null && mProducerMethod != null) {
+    synchronized void callProducerMethod(List<EventDeliverer> subscriberDeliverers) {
+        if (mObject != null && mProducerMethod != null && subscriberDeliverers != null) {
             try {
                 Object event = mProducerMethod.invoke(mObject);
                 if (event != null) {
-                    mBus.post(event);
+                    for (EventDeliverer eventDeliverer : subscriberDeliverers) {
+                        eventDeliverer.requestCallSubscriberMethods(event);
+                    }
                 }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e); // Not really nice but effective

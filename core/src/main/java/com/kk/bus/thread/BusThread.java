@@ -5,6 +5,7 @@ import com.kk.bus.Bus;
 import com.kk.bus.EventDeliverer;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 /**
@@ -174,15 +175,18 @@ public class BusThread extends Thread {
 
     /**
      * Producer variant: Posts the event to be handled by the thread. And ensures the thread is awaken.
+     *
      * @param eventDeliverer
      *         The object to be used to deliver the event.
+     * @param subscriberDeliverers
+     *         The subscriber deliverers which should be used as soon as the event is produced.
      */
-    synchronized void postEvent(EventDeliverer eventDeliverer) {
+    synchronized void postEvent(EventDeliverer eventDeliverer, List<EventDeliverer> subscriberDeliverers) {
         BusThreadEvent busThreadEvent = mEventsPool.poll();
         if (busThreadEvent == null) {
             busThreadEvent = new BusThreadEvent();
         }
-        busThreadEvent.set(eventDeliverer);
+        busThreadEvent.set(eventDeliverer, subscriberDeliverers);
         mEventsQueue.add(busThreadEvent);
         notify();
     }

@@ -4,6 +4,8 @@ package com.kk.bus.thread;
 import com.kk.bus.DeliveryContext;
 import com.kk.bus.EventDeliverer;
 
+import java.util.List;
+
 /**
  * Delivery context for the bus thread.
  *
@@ -35,8 +37,8 @@ class DeliveryContextThread extends DeliveryContext {
      * {@inheritDoc}
      */
     @Override
-    protected void requestCallProducerMethod(EventDeliverer eventDeliverer) {
-        mBusThread.postEvent(eventDeliverer);
+    protected void requestCallProducerMethod(EventDeliverer eventDeliverer, List<EventDeliverer> subscriberDeliverers) {
+        mBusThread.postEvent(eventDeliverer, subscriberDeliverers);
     }
 
     /**
@@ -51,7 +53,7 @@ class DeliveryContextThread extends DeliveryContext {
                 callSubscriberMethods(event.getEvent(), event.getEventDeliverer());
                 break;
             case PRODUCE:
-                callProducerMethod(event.getEventDeliverer());
+                callProducerMethod(event.getEventDeliverer(), event.getSubscriberDeliverers());
                 break;
         }
     }

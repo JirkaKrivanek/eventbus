@@ -7,6 +7,8 @@ import android.os.Looper;
 import com.kk.bus.DeliveryContext;
 import com.kk.bus.EventDeliverer;
 
+import java.util.List;
+
 /**
  * Delivery context for the Android main UI thread.
  *
@@ -33,11 +35,12 @@ public class DeliveryContextAndroid extends DeliveryContext {
      * {@inheritDoc}
      */
     @Override
-    protected void requestCallProducerMethod(final EventDeliverer eventDeliverer) {
+    protected void requestCallProducerMethod(final EventDeliverer eventDeliverer,
+                                             final List<EventDeliverer> subscriberDeliverers) {
         sHandler.post(new Runnable() {
             @Override
             public void run() {
-                callProducerMethod(eventDeliverer);
+                callProducerMethod(eventDeliverer, subscriberDeliverers);
             }
         });
     }

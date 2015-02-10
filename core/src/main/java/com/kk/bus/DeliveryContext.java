@@ -1,6 +1,8 @@
 package com.kk.bus;
 
 
+import java.util.List;
+
 /**
  * Interface of the event delivery context.
  * <p/>
@@ -31,17 +33,20 @@ public abstract class DeliveryContext {
      * <p/>
      * See also the {@link EventDeliverer#getDeliveryContext()} method.
      *
-     * @param eventDeliverer
-     *         The object carrying the context through which the event has to be delivered.
+     * @param producerDeliverer
+     *         The producer deliverer to be used to produce the event.
+     * @param subscriberDeliverers
+     *         The subscriber deliverers which should be used as soon as the event is produced.
      */
-    protected abstract void requestCallProducerMethod(EventDeliverer eventDeliverer);
+    protected abstract void requestCallProducerMethod(EventDeliverer producerDeliverer,
+                                                      List<EventDeliverer> subscriberDeliverers);
 
     /**
      * Performs the call of the subscriber methods.
      * <p/>
      * <dl><dt><b>Attention:</b></dt><dd>The subclass <b>MUST</b> ensure that this method is called on the delivery
      * context carried by the second parameter.
-     *
+     * <p/>
      * See the {@link EventDeliverer#getDeliveryContext()} method.</dd></dl>
      *
      * @param event
@@ -60,15 +65,17 @@ public abstract class DeliveryContext {
      * <p/>
      * <dl><dt><b>Attention:</b></dt><dd>The subclass <b>MUST</b> ensure that this method is called on the delivery
      * context carried by the parameter.
-     *
+     * <p/>
      * See the {@link EventDeliverer#getDeliveryContext()} method.</dd></dl>
      *
-     * @param eventDeliverer
-     *         The object carrying the target object and its methods to be invoked.
+     * @param producerDeliverer
+     *         The producer deliverer to be used to produce the event.
+     * @param subscriberDeliverers
+     *         The subscriber deliverers which should be used as soon as the event is produced.
      */
-    protected void callProducerMethod(EventDeliverer eventDeliverer) {
-        if (eventDeliverer != null) { // Defense
-            eventDeliverer.callProducerMethod();
+    protected void callProducerMethod(EventDeliverer producerDeliverer, List<EventDeliverer> subscriberDeliverers) {
+        if (producerDeliverer != null) { // Defense
+            producerDeliverer.callProducerMethod(subscriberDeliverers);
         }
     }
 }

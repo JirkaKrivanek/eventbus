@@ -11,6 +11,8 @@ import com.kk.bus.Subscribe;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 public class BasicSubscriberTests {
@@ -26,7 +28,7 @@ public class BasicSubscriberTests {
         }
 
         @Override
-        protected void requestCallProducerMethod(EventDeliverer eventDeliverer) {
+        protected void requestCallProducerMethod(EventDeliverer eventDeliverer, List<EventDeliverer> subscriberDeliverers) {
         }
     }
 

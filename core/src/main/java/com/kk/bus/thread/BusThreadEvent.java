@@ -3,6 +3,8 @@ package com.kk.bus.thread;
 
 import com.kk.bus.EventDeliverer;
 
+import java.util.List;
+
 /**
  * Message item carrying the event to be delivered.
  *
@@ -12,20 +14,24 @@ class BusThreadEvent {
 
     enum Type {SUBSCRIBE, PRODUCE}
 
-    private Type mType;
-    private Object         mEvent;
-    private EventDeliverer mEventDeliverer;
+
+    private Type                 mType;
+    private Object               mEvent;
+    private EventDeliverer       mEventDeliverer;
+    private List<EventDeliverer> mSubscriberDeliverers;
 
     void set(Object event, EventDeliverer eventDeliverer) {
         mType = Type.SUBSCRIBE;
         mEvent = event;
         mEventDeliverer = eventDeliverer;
+        mSubscriberDeliverers = null;
     }
 
-    void set(EventDeliverer eventDeliverer) {
+    void set(EventDeliverer eventDeliverer, List<EventDeliverer> subscriberDeliverers) {
         mType = Type.PRODUCE;
         mEvent = null;
         mEventDeliverer = eventDeliverer;
+        mSubscriberDeliverers = subscriberDeliverers;
     }
 
     void clear() {
@@ -33,7 +39,7 @@ class BusThreadEvent {
         mEventDeliverer = null;
     }
 
-    public Type getType() {
+    Type getType() {
         return mType;
     }
 
@@ -43,5 +49,9 @@ class BusThreadEvent {
 
     EventDeliverer getEventDeliverer() {
         return mEventDeliverer;
+    }
+
+    List<EventDeliverer> getSubscriberDeliverers() {
+        return mSubscriberDeliverers;
     }
 }

@@ -4,6 +4,7 @@ package com.kk.bus;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -38,7 +39,8 @@ public class EventDelivererTest {
         }
 
         @Override
-        protected void requestCallProducerMethod(EventDeliverer eventDeliverer) {
+        protected void requestCallProducerMethod(EventDeliverer eventDeliverer,
+                                                 List<EventDeliverer> subscriberDeliverers) {
         }
 
         public void callNow() throws InvocationTargetException {

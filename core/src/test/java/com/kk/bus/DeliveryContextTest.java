@@ -3,6 +3,8 @@ package com.kk.bus;
 
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -17,7 +19,8 @@ public class DeliveryContextTest {
         }
 
         @Override
-        protected void requestCallProducerMethod(EventDeliverer eventDeliverer) {
+        protected void requestCallProducerMethod(EventDeliverer eventDeliverer,
+                                                 List<EventDeliverer> subscriberDeliverers) {
         }
     }
 

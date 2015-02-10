@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,7 +20,7 @@ class RegisteredEvent {
     /**
      * Map of registered objects and related methods to call to handle the event.
      * <p/>
-     * Keys are registered objects, values are sets of methods to call when event should be delivered.
+     * Keys are registered objects, values are deliverer objects.
      */
     private final Map<Object, EventDeliverer> mObjectDeliverers = new HashMap<>();
 
@@ -107,30 +108,72 @@ class RegisteredEvent {
     }
 
     /**
-     * Calls all the producer methods of the specified registered object.
+     * Retrieves the list of all event deliverers having any subscriber and adds them to the specified list.
      *
-     * @param forThisRegisteredObjectOnly
-     *         The object for which all its producers have to be called.
+     * @param storeTo
+     *         The output list to add the matching event deliverers to. If {@code null} then a new list is created and
+     *         return.
+     * @param onlyIncludeObjectToRegister
+     *         If not {@code null} then only this object will be included with the result list.
+     * @return The {@code storeTo} list or a new list (if the {@code storeTo} was passed as {@code null}).
      */
-    public void callProducer(Object forThisRegisteredObjectOnly) {
-        EventDeliverer eventDeliverer;
-        synchronized (this) {
-            eventDeliverer = mObjectDeliverers.get(forThisRegisteredObjectOnly);
+    synchronized List<EventDeliverer> retrieveEventDeliverersHavingAnySubscribers(List<EventDeliverer> storeTo,
+                                                                                  Object onlyIncludeObjectToRegister) {
+        if (onlyIncludeObjectToRegister == null) {
+            for (EventDeliverer eventDeliverer : mObjectDeliverers.values()) {
+                if (eventDeliverer.hasSubscriberMethods()) {
+                    if (storeTo == null) {
+                        storeTo = new ArrayList<>();
+                    }
+                    storeTo.add(eventDeliverer);
+                }
+            }
+        } else {
+            EventDeliverer eventDeliverer = mObjectDeliverers.get(onlyIncludeObjectToRegister);
+            if (eventDeliverer != null) {
+                if (eventDeliverer.hasSubscriberMethods()) {
+                    if (storeTo == null) {
+                        storeTo = new ArrayList<>();
+                    }
+                    storeTo.add(eventDeliverer);
+                }
+            }
         }
-        if (eventDeliverer != null) {
-            eventDeliverer.requestCallProducerMethod();
-        }
+        return storeTo;
     }
 
     /**
-     * Calls the producer methods returning the specified classes or any subclasses on all registered objects except the
-     * specified one to exclude.
+     * Retrieves the list of all event deliverers and adds them to the specified list.
      *
-     * @param forEventClassesOrSubclasses
-     *         The set of classes for which the producers should be called.
-     * @param excludeRegisteredObject
-     *         The registered object to exclude from producing. If {@code null} then no exclusion.
+     * @param storeTo
+     *         The output list to add the matching event deliverers to. If {@code null} then a new list is created and
+     *         return.
+     * @param excludeObjectToRegister
+     *         If not {@code null} then this object will be excluded from the result list.
+     * @return The {@code storeTo} list or a new list (if the {@code storeTo} was passed as {@code null}).
      */
-    public void callProducers(Set<Class<?>> forEventClassesOrSubclasses, Object excludeRegisteredObject) {
+    public List<EventDeliverer> getEventDeliverersHavingAnyProducer(List<EventDeliverer> storeTo,
+                                                                    Object excludeObjectToRegister) {
+        for (EventDeliverer eventDeliverer : mObjectDeliverers.values()) {
+            if (eventDeliverer.hasProducerMethod()) {
+                if (excludeObjectToRegister == null || !eventDeliverer.hasRegisteredObject(excludeObjectToRegister)) {
+                    if (storeTo == null) {
+                        storeTo = new ArrayList<>();
+                    }
+                    storeTo.add(eventDeliverer);
+                }
+            }
+        }
+        return storeTo;
+    }
+
+    public EventDeliverer getEventDelivererWithProducerForRegisteredObject(Object registeredObject) {
+        EventDeliverer eventDeliverer = mObjectDeliverers.get(registeredObject);
+        if (eventDeliverer != null) {
+            if (eventDeliverer.hasProducerMethod()) {
+                return eventDeliverer;
+            }
+        }
+        return null;
     }
 }
