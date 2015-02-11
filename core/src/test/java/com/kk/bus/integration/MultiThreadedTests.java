@@ -7,6 +7,7 @@ import com.kk.bus.Subscribe;
 import com.kk.bus.thread.BusThread;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Random;
@@ -20,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * The multi threaded tests.
  */
+@Ignore
 public class MultiThreadedTests {
 
     private static Bus sBus;

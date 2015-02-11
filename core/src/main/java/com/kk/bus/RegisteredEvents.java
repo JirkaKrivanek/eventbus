@@ -30,6 +30,18 @@ class RegisteredEvents {
      */
     private final Map<Class<?>, RegisteredEvent> mRegisteredEvents = new HashMap<>();
 
+
+    private class ProducerSubscribers {
+
+        EventDeliverer       producer;
+        List<EventDeliverer> subscribers;
+
+        public ProducerSubscribers(EventDeliverer producer, List<EventDeliverer> subscribers) {
+            this.producer = producer;
+            this.subscribers = subscribers;
+        }
+    }
+
     /**
      * Registers the object to the bus.
      *
@@ -77,7 +89,7 @@ class RegisteredEvents {
         }
 
         // Collect producer-subscribers map
-        Map<EventDeliverer, List<EventDeliverer>> eventProducerSubscribers = null;
+        List<ProducerSubscribers> eventProducerSubscribers = null;
 
         // First collect the producers of the just being registered class
         // - but only those which produce events of interest by some other registered subscribing object
@@ -110,9 +122,9 @@ class RegisteredEvents {
                     }
                     if (eventProducer != null) {
                         if (eventProducerSubscribers == null) {
-                            eventProducerSubscribers = new HashMap<>();
+                            eventProducerSubscribers = new ArrayList<>();
                         }
-                        eventProducerSubscribers.put(eventProducer, eventSubscribers);
+                        eventProducerSubscribers.add(new ProducerSubscribers(eventProducer, eventSubscribers));
                     }
                 }
             }
@@ -125,9 +137,9 @@ class RegisteredEvents {
         if (subscribedEvents != null) {
             for (Class<?> subscribedEventClass : subscribedEvents) {
                 synchronized (this) {
-                    for (Class<?> producerEventClass : mRegisteredEvents.keySet()) {
-                        if (subscribedEventClass.isAssignableFrom(producerEventClass)) {
-                            List<EventDeliverer> eventProducers = mRegisteredEvents.get(producerEventClass).getEventDeliverersHavingAnyProducer(
+                    for (Class<?> producedEventClass : mRegisteredEvents.keySet()) {
+                        if (subscribedEventClass.isAssignableFrom(producedEventClass)) {
+                            List<EventDeliverer> eventProducers = mRegisteredEvents.get(producedEventClass).getEventDeliverersHavingAnyProducer(
                                     null,
                                     objectToRegister);
                             if (eventProducers != null) {
@@ -137,9 +149,10 @@ class RegisteredEvents {
                                         objectToRegister);
                                 for (EventDeliverer eventProducer : eventProducers) {
                                     if (eventProducerSubscribers == null) {
-                                        eventProducerSubscribers = new HashMap<>();
+                                        eventProducerSubscribers = new ArrayList<>();
                                     }
-                                    eventProducerSubscribers.put(eventProducer, eventSubscribers);
+                                    eventProducerSubscribers.add(new ProducerSubscribers(eventProducer,
+                                                                                         eventSubscribers));
                                 }
                             }
                         }
@@ -150,8 +163,8 @@ class RegisteredEvents {
 
         // Finally call the production
         if (eventProducerSubscribers != null) {
-            for (Map.Entry<EventDeliverer, List<EventDeliverer>> entry : eventProducerSubscribers.entrySet()) {
-                entry.getKey().requestCallProducerMethod(entry.getValue());
+            for (ProducerSubscribers producerSubscribers : eventProducerSubscribers) {
+                producerSubscribers.producer.requestCallProducerMethod(producerSubscribers.subscribers);
             }
         }
     }
