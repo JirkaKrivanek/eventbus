@@ -160,7 +160,11 @@ public class EventDeliverer {
         Set<Method> m;
         synchronized (this) {
             o = mObject;
-            m = new HashSet<>(mSubscriberMethods);
+            if (mSubscriberMethods == null) {
+                m = null;
+            } else {
+                m = new HashSet<>(mSubscriberMethods);
+            }
         }
         if (o != null && m != null) {
             for (Method method : m) {
