@@ -139,12 +139,12 @@ class RegisteredEvents {
                 synchronized (this) {
                     for (Class<?> producedEventClass : mRegisteredEvents.keySet()) {
                         if (subscribedEventClass.isAssignableFrom(producedEventClass)) {
-                            List<EventDeliverer> eventProducers = mRegisteredEvents.get(producedEventClass).getEventDeliverersHavingAnyProducer(
-                                    null,
-                                    objectToRegister);
+                            RegisteredEvent re = mRegisteredEvents.get(producedEventClass);
+                            List<EventDeliverer> eventProducers = re.getEventDeliverersHavingAnyProducer(null,
+                                                                                                         objectToRegister);
                             if (eventProducers != null) {
-                                RegisteredEvent registeredEvent = mRegisteredEvents.get(subscribedEventClass);
-                                List<EventDeliverer> eventSubscribers = registeredEvent.retrieveEventDeliverersHavingAnySubscribers(
+                                re = mRegisteredEvents.get(subscribedEventClass);
+                                List<EventDeliverer> eventSubscribers = re.retrieveEventDeliverersHavingAnySubscribers(
                                         null,
                                         objectToRegister);
                                 for (EventDeliverer eventProducer : eventProducers) {

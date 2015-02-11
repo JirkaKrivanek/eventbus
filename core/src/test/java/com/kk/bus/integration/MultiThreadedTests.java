@@ -7,9 +7,10 @@ import com.kk.bus.Subscribe;
 import com.kk.bus.thread.BusThread;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -21,7 +22,6 @@ import static org.junit.Assert.assertTrue;
 /**
  * The multi threaded tests.
  */
-@Ignore
 public class MultiThreadedTests {
 
     private static Bus sBus;
@@ -308,7 +308,7 @@ public class MultiThreadedTests {
 
 
     private static final int MESS_TOTAL_TIMEOUT_SEC        = 60;
-    private static final int MESS_TOTAL_COUNT              = 10000;
+    private static final int MESS_TOTAL_COUNT              = 100000;
     private static final int MESS_MAX_COUNT_PER_NEXT       = 1000;
     private static final int MESS_MAX_COUNT_PER_BUS_THREAD = 100;
     private static final int MESS_MAX_COUNT_PER_GEN_THREAD = 10;
@@ -443,9 +443,17 @@ public class MultiThreadedTests {
 
         private void next() {
             int count = randomRemainingCount(MESS_MAX_COUNT_PER_NEXT);
+            List<Integer> counts = new ArrayList<>();
+            StringBuilder sb = new StringBuilder();
+            sb.append(count).append(",");
             while (count > 0) {
                 int cnt = randomCount(MESS_MAX_COUNT_PER_BUS_THREAD, count);
+                counts.add(cnt);
+                sb.append(cnt).append(",");
                 count -= cnt;
+            }
+            //System.out.format("MessBusThread.next(%s)\n", sb.toString());
+            for (Integer cnt : counts) {
                 new MessBusThread(sBus, cnt);
             }
         }

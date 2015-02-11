@@ -3,6 +3,7 @@ package com.kk.bus;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -115,9 +116,13 @@ public class EventDeliverer {
      * @param event
      *         The event to deliver.
      */
-    synchronized void requestCallSubscriberMethods(Object event) {
-        if (mDeliveryContext != null) {
-            mDeliveryContext.requestCallSubscriberMethods(event, this);
+    void requestCallSubscriberMethods(Object event) {
+        DeliveryContext dc;
+        synchronized (this) {
+            dc = mDeliveryContext;
+        }
+        if (dc != null) {
+            dc.requestCallSubscriberMethods(event, this);
         }
     }
 
@@ -129,9 +134,13 @@ public class EventDeliverer {
      * @param subscriberDeliverers
      *         The subscriber deliverers which should be used as soon as the event is produced.
      */
-    synchronized void requestCallProducerMethod(List<EventDeliverer> subscriberDeliverers) {
-        if (mDeliveryContext != null) {
-            mDeliveryContext.requestCallProducerMethod(this, subscriberDeliverers);
+    void requestCallProducerMethod(List<EventDeliverer> subscriberDeliverers) {
+        DeliveryContext dc;
+        synchronized (this) {
+            dc = mDeliveryContext;
+        }
+        if (dc != null) {
+            dc.requestCallProducerMethod(this, subscriberDeliverers);
         }
     }
 
@@ -146,16 +155,56 @@ public class EventDeliverer {
      * @param event
      *         The event to pass to the methods.
      */
-    synchronized void callSubscriberMethods(Object event) {
-        if (mObject != null && mSubscriberMethods != null) {
-            for (Method method : mSubscriberMethods) {
+    void callSubscriberMethods(Object event) {
+        Object o;
+        Set<Method> m;
+        synchronized (this) {
+            o = mObject;
+            m = new HashSet<>(mSubscriberMethods);
+        }
+        if (o != null && m != null) {
+            for (Method method : m) {
                 try {
-                    method.invoke(mObject, event);
+                    method.invoke(o, event);
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e); // Not really nice but effective
                 } catch (InvocationTargetException e) {
                     throw new RuntimeException(e); // Not really nice but effective
                 }
+            }
+        }
+    }
+
+    /**
+     * Performs the call to the producer method of the object.
+     * <p/>
+     * It is sure the call is made on the correct delivery context (thread) - i.e. the one which called the {@link
+     * Bus#register(Object)} method.
+     * <p/>
+     * It is intentionally synchronized to prevent the race with the {@link #clearOut()} method.
+     *
+     * @param subscriberDeliverers
+     *         The subscriber deliverers which should be used as soon as the event is produced.
+     */
+    void callProducerMethod(List<EventDeliverer> subscriberDeliverers) {
+        Object o;
+        Method m;
+        synchronized (this) {
+            o = mObject;
+            m = mProducerMethod;
+        }
+        if (o != null && m != null && subscriberDeliverers != null) {
+            try {
+                Object event = m.invoke(o);
+                if (event != null) {
+                    for (EventDeliverer eventDeliverer : subscriberDeliverers) {
+                        eventDeliverer.requestCallSubscriberMethods(event);
+                    }
+                }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e); // Not really nice but effective
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e); // Not really nice but effective
             }
         }
     }
@@ -187,33 +236,5 @@ public class EventDeliverer {
      */
     synchronized boolean hasRegisteredObject(Object registeredObject) {
         return mObject == registeredObject;
-    }
-
-    /**
-     * Performs the call to the producer method of the object.
-     * <p/>
-     * It is sure the call is made on the correct delivery context (thread) - i.e. the one which called the {@link
-     * Bus#register(Object)} method.
-     * <p/>
-     * It is intentionally synchronized to prevent the race with the {@link #clearOut()} method.
-     *
-     * @param subscriberDeliverers
-     *         The subscriber deliverers which should be used as soon as the event is produced.
-     */
-    synchronized void callProducerMethod(List<EventDeliverer> subscriberDeliverers) {
-        if (mObject != null && mProducerMethod != null && subscriberDeliverers != null) {
-            try {
-                Object event = mProducerMethod.invoke(mObject);
-                if (event != null) {
-                    for (EventDeliverer eventDeliverer : subscriberDeliverers) {
-                        eventDeliverer.requestCallSubscriberMethods(event);
-                    }
-                }
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e); // Not really nice but effective
-            } catch (InvocationTargetException e) {
-                throw new RuntimeException(e); // Not really nice but effective
-            }
-        }
     }
 }

@@ -36,15 +36,16 @@ class RegisteredEvent {
      * @param deliveryContext
      *         The delivery context under which the producing and subscribing should occur for that object.
      */
-    void register(Bus bus, Object objectToRegister, Set<Method> subscriberMethods, DeliveryContext deliveryContext) {
-        synchronized (this) {
-            EventDeliverer eventDeliverer = mObjectDeliverers.get(objectToRegister);
-            if (eventDeliverer == null) {
-                eventDeliverer = new EventDeliverer(bus, objectToRegister, deliveryContext);
-                mObjectDeliverers.put(objectToRegister, eventDeliverer);
-            }
-            eventDeliverer.setSubscriberMethods(subscriberMethods);
+    synchronized void register(Bus bus,
+                               Object objectToRegister,
+                               Set<Method> subscriberMethods,
+                               DeliveryContext deliveryContext) {
+        EventDeliverer eventDeliverer = mObjectDeliverers.get(objectToRegister);
+        if (eventDeliverer == null) {
+            eventDeliverer = new EventDeliverer(bus, objectToRegister, deliveryContext);
+            mObjectDeliverers.put(objectToRegister, eventDeliverer);
         }
+        eventDeliverer.setSubscriberMethods(subscriberMethods);
     }
 
     /**
@@ -59,15 +60,16 @@ class RegisteredEvent {
      * @param deliveryContext
      *         The delivery context under which the producing and subscribing should occur for that object.
      */
-    void register(Bus bus, Object objectToRegister, Method producerMethod, DeliveryContext deliveryContext) {
-        synchronized (this) {
-            EventDeliverer eventDeliverer = mObjectDeliverers.get(objectToRegister);
-            if (eventDeliverer == null) {
-                eventDeliverer = new EventDeliverer(bus, objectToRegister, deliveryContext);
-                mObjectDeliverers.put(objectToRegister, eventDeliverer);
-            }
-            eventDeliverer.setProducerMethod(producerMethod);
+    synchronized void register(Bus bus,
+                               Object objectToRegister,
+                               Method producerMethod,
+                               DeliveryContext deliveryContext) {
+        EventDeliverer eventDeliverer = mObjectDeliverers.get(objectToRegister);
+        if (eventDeliverer == null) {
+            eventDeliverer = new EventDeliverer(bus, objectToRegister, deliveryContext);
+            mObjectDeliverers.put(objectToRegister, eventDeliverer);
         }
+        eventDeliverer.setProducerMethod(producerMethod);
     }
 
     /**
@@ -79,11 +81,8 @@ class RegisteredEvent {
      * @param objectToUnregister
      *         The object to unregister.
      */
-    void unregister(Object objectToUnregister) {
-        EventDeliverer registeredEventObjectContext;
-        synchronized (this) {
-            registeredEventObjectContext = mObjectDeliverers.remove(objectToUnregister);
-        }
+    synchronized void unregister(Object objectToUnregister) {
+        EventDeliverer registeredEventObjectContext = mObjectDeliverers.remove(objectToUnregister);
         if (registeredEventObjectContext != null) {
             registeredEventObjectContext.clearOut();
         }
@@ -98,7 +97,7 @@ class RegisteredEvent {
     void post(Object event) {
         Collection<EventDeliverer> eventDeliverers;
         // The synchronized copy of the object methods is here to avoid the concurrency issues
-        // TODO: It is perfectly safe but pretty ineffective: Think out better solution
+        // TODO: This is perfectly safe but pretty ineffective: Think out better solution
         synchronized (this) {
             eventDeliverers = new ArrayList<>(mObjectDeliverers.values());
         }
@@ -152,8 +151,8 @@ class RegisteredEvent {
      *         If not {@code null} then this object will be excluded from the result list.
      * @return The {@code storeTo} list or a new list (if the {@code storeTo} was passed as {@code null}).
      */
-    public List<EventDeliverer> getEventDeliverersHavingAnyProducer(List<EventDeliverer> storeTo,
-                                                                    Object excludeObjectToRegister) {
+    synchronized List<EventDeliverer> getEventDeliverersHavingAnyProducer(List<EventDeliverer> storeTo,
+                                                                          Object excludeObjectToRegister) {
         for (EventDeliverer eventDeliverer : mObjectDeliverers.values()) {
             if (eventDeliverer.hasProducerMethod()) {
                 if (excludeObjectToRegister == null || !eventDeliverer.hasRegisteredObject(excludeObjectToRegister)) {
@@ -167,7 +166,7 @@ class RegisteredEvent {
         return storeTo;
     }
 
-    public EventDeliverer getEventDelivererWithProducerForRegisteredObject(Object registeredObject) {
+    synchronized EventDeliverer getEventDelivererWithProducerForRegisteredObject(Object registeredObject) {
         EventDeliverer eventDeliverer = mObjectDeliverers.get(registeredObject);
         if (eventDeliverer != null) {
             if (eventDeliverer.hasProducerMethod()) {
