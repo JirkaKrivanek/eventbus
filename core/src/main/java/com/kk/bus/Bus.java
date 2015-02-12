@@ -31,6 +31,9 @@ public class Bus {
      * <p/>
      * <dl><dt><b>Note:</b></dt><dd>Unregistering the object which was not registered (or was already unregistered) has
      * no effect.</dd></dl>
+     * <p/>
+     * <dl><dt><b>Attention:</b></dt><dd>Unregister method MUST be called from the same thread from which the register
+     * was called, otherwise race conditions may happen.</dd></dl>
      *
      * @param objectToUnregister
      *         The object to unregister from the event bus.
