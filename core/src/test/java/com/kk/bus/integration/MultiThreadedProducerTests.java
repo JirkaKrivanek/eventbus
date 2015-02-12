@@ -22,7 +22,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * The multi threaded tests.
  */
-public class MultiThreadedTests {
+public class MultiThreadedProducerTests {
 
     private static Bus sBus;
 

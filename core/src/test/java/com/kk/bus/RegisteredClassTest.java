@@ -3,9 +3,13 @@ package com.kk.bus;
 
 import org.junit.Test;
 
+import java.lang.reflect.Method;
+import java.util.Set;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class RegisteredClassTest {
@@ -13,11 +17,1305 @@ public class RegisteredClassTest {
     private static class EventA {}
 
 
+    private static class EventAA extends EventA {}
+
+
+    private static class EventAAA extends EventAA {}
+
+
     private static class EventB {}
 
 
     private static interface EventInterface {}
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Methods: Constructor(s)
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    private static class ClassConstructor {}
+
+    public void constructors() {
+        RegisteredClass registeredClass = new RegisteredClass(ClassConstructor.class);
+        assertNotNull(registeredClass);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Methods: hasAnySubscribers()
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    private static class ClassHasAnySubscribers_None {
+
+        public void fakePubA(EventA event) {
+        }
+
+        public void fakePubB(EventB event) {
+        }
+
+        public void fakePubC(int event) {
+        }
+
+        public int fakePubD() {
+            return 0;
+        }
+
+        protected void fakeProA(EventA event) {
+        }
+
+        protected void fakeProB(EventB event) {
+        }
+
+        protected void fakeProC(int event) {
+        }
+
+        protected int fakeProD() {
+            return 0;
+        }
+
+        void fakePproA(EventA event) {
+        }
+
+        void fakePproB(EventB event) {
+        }
+
+        void fakePproC(int event) {
+        }
+
+        int fakePproD() {
+            return 0;
+        }
+
+        private void fakePriA(EventA event) {
+        }
+
+        private void fakePriB(EventB event) {
+        }
+
+        private void fakePriC(int event) {
+        }
+
+        private int fakePriD() {
+            return 0;
+        }
+
+        @Produce
+        public EventA produceEventA() {
+            return null;
+        }
+
+        @Produce
+        public EventB produceEventB() {
+            return null;
+        }
+    }
+
+
+    private static class ClassHasAnySubscribers_One {
+
+        public void fakePubA(EventA event) {
+        }
+
+        public void fakePubB(EventB event) {
+        }
+
+        public void fakePubC(int event) {
+        }
+
+        public int fakePubD() {
+            return 0;
+        }
+
+        protected void fakeProA(EventA event) {
+        }
+
+        protected void fakeProB(EventB event) {
+        }
+
+        protected void fakeProC(int event) {
+        }
+
+        protected int fakeProD() {
+            return 0;
+        }
+
+        void fakePproA(EventA event) {
+        }
+
+        void fakePproB(EventB event) {
+        }
+
+        void fakePproC(int event) {
+        }
+
+        int fakePproD() {
+            return 0;
+        }
+
+        private void fakePriA(EventA event) {
+        }
+
+        private void fakePriB(EventB event) {
+        }
+
+        private void fakePriC(int event) {
+        }
+
+        private int fakePriD() {
+            return 0;
+        }
+
+        @Produce
+        public EventA produceEventA() {
+            return null;
+        }
+
+        @Produce
+        public EventB produceEventB() {
+            return null;
+        }
+
+        @Subscribe
+        public void onEventA(EventA event) {
+        }
+    }
+
+
+    private static class ClassHasAnySubscribers_Two {
+
+        public void fakePubA(EventA event) {
+        }
+
+        public void fakePubB(EventB event) {
+        }
+
+        public void fakePubC(int event) {
+        }
+
+        public int fakePubD() {
+            return 0;
+        }
+
+        protected void fakeProA(EventA event) {
+        }
+
+        protected void fakeProB(EventB event) {
+        }
+
+        protected void fakeProC(int event) {
+        }
+
+        protected int fakeProD() {
+            return 0;
+        }
+
+        void fakePproA(EventA event) {
+        }
+
+        void fakePproB(EventB event) {
+        }
+
+        void fakePproC(int event) {
+        }
+
+        int fakePproD() {
+            return 0;
+        }
+
+        private void fakePriA(EventA event) {
+        }
+
+        private void fakePriB(EventB event) {
+        }
+
+        private void fakePriC(int event) {
+        }
+
+        private int fakePriD() {
+            return 0;
+        }
+
+        @Produce
+        public EventA produceEventA() {
+            return null;
+        }
+
+        @Produce
+        public EventB produceEventB() {
+            return null;
+        }
+
+        @Subscribe
+        public void onEventA(EventA event) {
+        }
+
+        @Subscribe
+        public void onEventB(EventB event) {
+        }
+    }
+
+    @Test
+    public void hasAnySubscribers() {
+        RegisteredClass registeredClass = new RegisteredClass(ClassHasAnySubscribers_None.class);
+        assertFalse(registeredClass.hasAnySubscribers());
+        //
+        registeredClass = new RegisteredClass(ClassHasAnySubscribers_One.class);
+        assertTrue(registeredClass.hasAnySubscribers());
+        //
+        registeredClass = new RegisteredClass(ClassHasAnySubscribers_Two.class);
+        assertTrue(registeredClass.hasAnySubscribers());
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Methods: getSubscriberMethods()
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    private static class GetSubscribedMethods_None {
+
+        public void fakePubA(EventA event) {
+        }
+
+        public void fakePubB(EventB event) {
+        }
+
+        public void fakePubC(int event) {
+        }
+
+        public int fakePubD() {
+            return 0;
+        }
+
+        protected void fakeProA(EventA event) {
+        }
+
+        protected void fakeProB(EventB event) {
+        }
+
+        protected void fakeProC(int event) {
+        }
+
+        protected int fakeProD() {
+            return 0;
+        }
+
+        void fakePproA(EventA event) {
+        }
+
+        void fakePproB(EventB event) {
+        }
+
+        void fakePproC(int event) {
+        }
+
+        int fakePproD() {
+            return 0;
+        }
+
+        private void fakePriA(EventA event) {
+        }
+
+        private void fakePriB(EventB event) {
+        }
+
+        private void fakePriC(int event) {
+        }
+
+        private int fakePriD() {
+            return 0;
+        }
+
+        @Produce
+        public EventA produceEventA() {
+            return null;
+        }
+
+        @Produce
+        public EventB produceEventB() {
+            return null;
+        }
+    }
+
+
+    private static class GetSubscribedMethods_One {
+
+        public void fakePubA(EventA event) {
+        }
+
+        public void fakePubB(EventB event) {
+        }
+
+        public void fakePubC(int event) {
+        }
+
+        public int fakePubD() {
+            return 0;
+        }
+
+        protected void fakeProA(EventA event) {
+        }
+
+        protected void fakeProB(EventB event) {
+        }
+
+        protected void fakeProC(int event) {
+        }
+
+        protected int fakeProD() {
+            return 0;
+        }
+
+        void fakePproA(EventA event) {
+        }
+
+        void fakePproB(EventB event) {
+        }
+
+        void fakePproC(int event) {
+        }
+
+        int fakePproD() {
+            return 0;
+        }
+
+        private void fakePriA(EventA event) {
+        }
+
+        private void fakePriB(EventB event) {
+        }
+
+        private void fakePriC(int event) {
+        }
+
+        private int fakePriD() {
+            return 0;
+        }
+
+        @Produce
+        public EventA produceEventA() {
+            return null;
+        }
+
+        @Produce
+        public EventB produceEventB() {
+            return null;
+        }
+
+        @Subscribe
+        public void onEventA(EventA event) {
+        }
+    }
+
+
+    private static class GetSubscribedMethods_Two {
+
+        public void fakePubA(EventA event) {
+        }
+
+        public void fakePubB(EventB event) {
+        }
+
+        public void fakePubC(int event) {
+        }
+
+        public int fakePubD() {
+            return 0;
+        }
+
+        protected void fakeProA(EventA event) {
+        }
+
+        protected void fakeProB(EventB event) {
+        }
+
+        protected void fakeProC(int event) {
+        }
+
+        protected int fakeProD() {
+            return 0;
+        }
+
+        void fakePproA(EventA event) {
+        }
+
+        void fakePproB(EventB event) {
+        }
+
+        void fakePproC(int event) {
+        }
+
+        int fakePproD() {
+            return 0;
+        }
+
+        private void fakePriA(EventA event) {
+        }
+
+        private void fakePriB(EventB event) {
+        }
+
+        private void fakePriC(int event) {
+        }
+
+        private int fakePriD() {
+            return 0;
+        }
+
+        @Produce
+        public EventA produceEventA() {
+            return null;
+        }
+
+        @Produce
+        public EventB produceEventB() {
+            return null;
+        }
+
+        @Subscribe
+        public void onEventA(EventA event) {
+        }
+
+        @Subscribe
+        public void onEventB(EventB event) {
+        }
+    }
+
+    @Test
+    public void getSubscribedMethods() {
+        RegisteredClass registeredClass = new RegisteredClass(GetSubscribedMethods_None.class);
+        Set<Method> methods = registeredClass.getSubscriberMethods(EventA.class);
+        assertNull(methods);
+        methods = registeredClass.getSubscriberMethods(EventB.class);
+        assertNull(methods);
+        //
+        registeredClass = new RegisteredClass(GetSubscribedMethods_One.class);
+        methods = registeredClass.getSubscriberMethods(EventA.class);
+        assertNotNull(methods);
+        assertEquals(1, methods.size());
+        methods = registeredClass.getSubscriberMethods(EventB.class);
+        assertNull(methods);
+        //
+        registeredClass = new RegisteredClass(GetSubscribedMethods_Two.class);
+        methods = registeredClass.getSubscriberMethods(EventA.class);
+        assertNotNull(methods);
+        assertEquals(1, methods.size());
+        methods = registeredClass.getSubscriberMethods(EventB.class);
+        assertNotNull(methods);
+        assertEquals(1, methods.size());
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Methods: getSubscribedEventClasses()
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    private static class ClassGetSubscribedEventClasses_None {
+
+        public void fakePubA(EventA event) {
+        }
+
+        public void fakePubB(EventB event) {
+        }
+
+        public void fakePubC(int event) {
+        }
+
+        public int fakePubD() {
+            return 0;
+        }
+
+        protected void fakeProA(EventA event) {
+        }
+
+        protected void fakeProB(EventB event) {
+        }
+
+        protected void fakeProC(int event) {
+        }
+
+        protected int fakeProD() {
+            return 0;
+        }
+
+        void fakePproA(EventA event) {
+        }
+
+        void fakePproB(EventB event) {
+        }
+
+        void fakePproC(int event) {
+        }
+
+        int fakePproD() {
+            return 0;
+        }
+
+        private void fakePriA(EventA event) {
+        }
+
+        private void fakePriB(EventB event) {
+        }
+
+        private void fakePriC(int event) {
+        }
+
+        private int fakePriD() {
+            return 0;
+        }
+
+        @Produce
+        public EventA produceEventA() {
+            return null;
+        }
+
+        @Produce
+        public EventB produceEventB() {
+            return null;
+        }
+    }
+
+
+    private static class ClassGetSubscribedEventClasses_One {
+
+        public void fakePubA(EventA event) {
+        }
+
+        public void fakePubB(EventB event) {
+        }
+
+        public void fakePubC(int event) {
+        }
+
+        public int fakePubD() {
+            return 0;
+        }
+
+        protected void fakeProA(EventA event) {
+        }
+
+        protected void fakeProB(EventB event) {
+        }
+
+        protected void fakeProC(int event) {
+        }
+
+        protected int fakeProD() {
+            return 0;
+        }
+
+        void fakePproA(EventA event) {
+        }
+
+        void fakePproB(EventB event) {
+        }
+
+        void fakePproC(int event) {
+        }
+
+        int fakePproD() {
+            return 0;
+        }
+
+        private void fakePriA(EventA event) {
+        }
+
+        private void fakePriB(EventB event) {
+        }
+
+        private void fakePriC(int event) {
+        }
+
+        private int fakePriD() {
+            return 0;
+        }
+
+        @Produce
+        public EventA produceEventA() {
+            return null;
+        }
+
+        @Produce
+        public EventB produceEventB() {
+            return null;
+        }
+
+        @Subscribe
+        public void onEventA(EventA event) {
+        }
+    }
+
+
+    private static class ClassGetSubscribedEventClasses_Two {
+
+        public void fakePubA(EventA event) {
+        }
+
+        public void fakePubB(EventB event) {
+        }
+
+        public void fakePubC(int event) {
+        }
+
+        public int fakePubD() {
+            return 0;
+        }
+
+        protected void fakeProA(EventA event) {
+        }
+
+        protected void fakeProB(EventB event) {
+        }
+
+        protected void fakeProC(int event) {
+        }
+
+        protected int fakeProD() {
+            return 0;
+        }
+
+        void fakePproA(EventA event) {
+        }
+
+        void fakePproB(EventB event) {
+        }
+
+        void fakePproC(int event) {
+        }
+
+        int fakePproD() {
+            return 0;
+        }
+
+        private void fakePriA(EventA event) {
+        }
+
+        private void fakePriB(EventB event) {
+        }
+
+        private void fakePriC(int event) {
+        }
+
+        private int fakePriD() {
+            return 0;
+        }
+
+        @Produce
+        public EventA produceEventA() {
+            return null;
+        }
+
+        @Produce
+        public EventB produceEventB() {
+            return null;
+        }
+
+        @Subscribe
+        public void onEventA(EventA event) {
+        }
+
+        @Subscribe
+        public void onEventB(EventB event) {
+        }
+    }
+
+    @Test
+    public void getSubscribedEventClasses() {
+        RegisteredClass registeredClass = new RegisteredClass(ClassGetSubscribedEventClasses_None.class);
+        assertNull(registeredClass.getSubscribedEventClasses());
+        //
+        registeredClass = new RegisteredClass(ClassGetSubscribedEventClasses_One.class);
+        Set<Class<?>> classes = registeredClass.getSubscribedEventClasses();
+        assertNotNull(classes);
+        assertEquals(1, classes.size());
+        assertTrue(classes.contains(EventA.class));
+        //
+        registeredClass = new RegisteredClass(ClassGetSubscribedEventClasses_Two.class);
+        classes = registeredClass.getSubscribedEventClasses();
+        assertNotNull(classes);
+        assertEquals(2, classes.size());
+        assertTrue(classes.contains(EventA.class));
+        assertTrue(classes.contains(EventB.class));
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Methods: hasAnyProducers()
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    private static class HasAnyProducers_None {
+
+        public void fakePubA(EventA event) {
+        }
+
+        public void fakePubB(EventB event) {
+        }
+
+        public void fakePubC(int event) {
+        }
+
+        public int fakePubD() {
+            return 0;
+        }
+
+        protected void fakeProA(EventA event) {
+        }
+
+        protected void fakeProB(EventB event) {
+        }
+
+        protected void fakeProC(int event) {
+        }
+
+        protected int fakeProD() {
+            return 0;
+        }
+
+        void fakePproA(EventA event) {
+        }
+
+        void fakePproB(EventB event) {
+        }
+
+        void fakePproC(int event) {
+        }
+
+        int fakePproD() {
+            return 0;
+        }
+
+        private void fakePriA(EventA event) {
+        }
+
+        private void fakePriB(EventB event) {
+        }
+
+        private void fakePriC(int event) {
+        }
+
+        private int fakePriD() {
+            return 0;
+        }
+
+        @Subscribe
+        public void onEventA(EventA event) {
+        }
+
+        @Subscribe
+        public void onEventB(EventB event) {
+        }
+    }
+
+
+    private static class HasAnyProducers_One {
+
+        public void fakePubA(EventA event) {
+        }
+
+        public void fakePubB(EventB event) {
+        }
+
+        public void fakePubC(int event) {
+        }
+
+        public int fakePubD() {
+            return 0;
+        }
+
+        protected void fakeProA(EventA event) {
+        }
+
+        protected void fakeProB(EventB event) {
+        }
+
+        protected void fakeProC(int event) {
+        }
+
+        protected int fakeProD() {
+            return 0;
+        }
+
+        void fakePproA(EventA event) {
+        }
+
+        void fakePproB(EventB event) {
+        }
+
+        void fakePproC(int event) {
+        }
+
+        int fakePproD() {
+            return 0;
+        }
+
+        private void fakePriA(EventA event) {
+        }
+
+        private void fakePriB(EventB event) {
+        }
+
+        private void fakePriC(int event) {
+        }
+
+        private int fakePriD() {
+            return 0;
+        }
+
+        @Subscribe
+        public void onEventA(EventA event) {
+        }
+
+        @Subscribe
+        public void onEventB(EventB event) {
+        }
+
+        @Produce
+        public EventA produceEventA() {
+            return null;
+        }
+    }
+
+
+    private static class HasAnyProducers_Two {
+
+        public void fakePubA(EventA event) {
+        }
+
+        public void fakePubB(EventB event) {
+        }
+
+        public void fakePubC(int event) {
+        }
+
+        public int fakePubD() {
+            return 0;
+        }
+
+        protected void fakeProA(EventA event) {
+        }
+
+        protected void fakeProB(EventB event) {
+        }
+
+        protected void fakeProC(int event) {
+        }
+
+        protected int fakeProD() {
+            return 0;
+        }
+
+        void fakePproA(EventA event) {
+        }
+
+        void fakePproB(EventB event) {
+        }
+
+        void fakePproC(int event) {
+        }
+
+        int fakePproD() {
+            return 0;
+        }
+
+        private void fakePriA(EventA event) {
+        }
+
+        private void fakePriB(EventB event) {
+        }
+
+        private void fakePriC(int event) {
+        }
+
+        private int fakePriD() {
+            return 0;
+        }
+
+        @Subscribe
+        public void onEventA(EventA event) {
+        }
+
+        @Subscribe
+        public void onEventB(EventB event) {
+        }
+
+        @Produce
+        public EventA produceEventA() {
+            return null;
+        }
+
+        @Produce
+        public EventB produceEventB() {
+            return null;
+        }
+    }
+
+    @Test
+    public void hasAnyProducers() {
+        RegisteredClass registeredClass = new RegisteredClass(HasAnyProducers_None.class);
+        assertFalse(registeredClass.hasAnyProducers());
+        //
+        registeredClass = new RegisteredClass(HasAnyProducers_One.class);
+        assertTrue(registeredClass.hasAnyProducers());
+        //
+        registeredClass = new RegisteredClass(HasAnyProducers_Two.class);
+        assertTrue(registeredClass.hasAnyProducers());
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Methods: getProducedEventClasses()
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    private static class GetProducedEventClasses_None {
+
+        public void fakePubA(EventA event) {
+        }
+
+        public void fakePubB(EventB event) {
+        }
+
+        public void fakePubC(int event) {
+        }
+
+        public int fakePubD() {
+            return 0;
+        }
+
+        protected void fakeProA(EventA event) {
+        }
+
+        protected void fakeProB(EventB event) {
+        }
+
+        protected void fakeProC(int event) {
+        }
+
+        protected int fakeProD() {
+            return 0;
+        }
+
+        void fakePproA(EventA event) {
+        }
+
+        void fakePproB(EventB event) {
+        }
+
+        void fakePproC(int event) {
+        }
+
+        int fakePproD() {
+            return 0;
+        }
+
+        private void fakePriA(EventA event) {
+        }
+
+        private void fakePriB(EventB event) {
+        }
+
+        private void fakePriC(int event) {
+        }
+
+        private int fakePriD() {
+            return 0;
+        }
+
+        @Subscribe
+        public void onEventA(EventA event) {
+        }
+
+        @Subscribe
+        public void onEventB(EventB event) {
+        }
+    }
+
+
+    private static class GetProducedEventClasses_One {
+
+        public void fakePubA(EventA event) {
+        }
+
+        public void fakePubB(EventB event) {
+        }
+
+        public void fakePubC(int event) {
+        }
+
+        public int fakePubD() {
+            return 0;
+        }
+
+        protected void fakeProA(EventA event) {
+        }
+
+        protected void fakeProB(EventB event) {
+        }
+
+        protected void fakeProC(int event) {
+        }
+
+        protected int fakeProD() {
+            return 0;
+        }
+
+        void fakePproA(EventA event) {
+        }
+
+        void fakePproB(EventB event) {
+        }
+
+        void fakePproC(int event) {
+        }
+
+        int fakePproD() {
+            return 0;
+        }
+
+        private void fakePriA(EventA event) {
+        }
+
+        private void fakePriB(EventB event) {
+        }
+
+        private void fakePriC(int event) {
+        }
+
+        private int fakePriD() {
+            return 0;
+        }
+
+        @Subscribe
+        public void onEventA(EventA event) {
+        }
+
+        @Subscribe
+        public void onEventB(EventB event) {
+        }
+
+        @Produce
+        public EventA produceEventA() {
+            return null;
+        }
+    }
+
+
+    private static class GetProducedEventClasses_Two {
+
+        public void fakePubA(EventA event) {
+        }
+
+        public void fakePubB(EventB event) {
+        }
+
+        public void fakePubC(int event) {
+        }
+
+        public int fakePubD() {
+            return 0;
+        }
+
+        protected void fakeProA(EventA event) {
+        }
+
+        protected void fakeProB(EventB event) {
+        }
+
+        protected void fakeProC(int event) {
+        }
+
+        protected int fakeProD() {
+            return 0;
+        }
+
+        void fakePproA(EventA event) {
+        }
+
+        void fakePproB(EventB event) {
+        }
+
+        void fakePproC(int event) {
+        }
+
+        int fakePproD() {
+            return 0;
+        }
+
+        private void fakePriA(EventA event) {
+        }
+
+        private void fakePriB(EventB event) {
+        }
+
+        private void fakePriC(int event) {
+        }
+
+        private int fakePriD() {
+            return 0;
+        }
+
+        @Subscribe
+        public void onEventA(EventA event) {
+        }
+
+        @Subscribe
+        public void onEventB(EventB event) {
+        }
+
+        @Produce
+        public EventA produceEventA() {
+            return null;
+        }
+
+        @Produce
+        public EventB produceEventB() {
+            return null;
+        }
+    }
+
+    @Test
+    public void getProducedEventClasses() {
+        RegisteredClass registeredClass = new RegisteredClass(GetProducedEventClasses_None.class);
+        Set<Class<?>> classes = registeredClass.getProducedEventClasses();
+        assertNull(classes);
+        //
+        registeredClass = new RegisteredClass(GetProducedEventClasses_One.class);
+        classes = registeredClass.getProducedEventClasses();
+        assertNotNull(classes);
+        assertEquals(1, classes.size());
+        assertTrue(classes.contains(EventA.class));
+        //
+        registeredClass = new RegisteredClass(GetProducedEventClasses_Two.class);
+        assertTrue(registeredClass.hasAnyProducers());
+        classes = registeredClass.getProducedEventClasses();
+        assertNotNull(classes);
+        assertEquals(2, classes.size());
+        assertTrue(classes.contains(EventA.class));
+        assertTrue(classes.contains(EventB.class));
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Methods: getProducerMethod()
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    class ClassGetProducerMethod {
+
+        public void fakePubA(EventA event) {
+        }
+
+        public void fakePubB(EventB event) {
+        }
+
+        public void fakePubC(int event) {
+        }
+
+        public int fakePubD() {
+            return 0;
+        }
+
+        protected void fakeProA(EventA event) {
+        }
+
+        protected void fakeProB(EventB event) {
+        }
+
+        protected void fakeProC(int event) {
+        }
+
+        protected int fakeProD() {
+            return 0;
+        }
+
+        void fakePproA(EventA event) {
+        }
+
+        void fakePproB(EventB event) {
+        }
+
+        void fakePproC(int event) {
+        }
+
+        int fakePproD() {
+            return 0;
+        }
+
+        private void fakePriA(EventA event) {
+        }
+
+        private void fakePriB(EventB event) {
+        }
+
+        private void fakePriC(int event) {
+        }
+
+        private int fakePriD() {
+            return 0;
+        }
+
+        @Subscribe
+        public void onEventA(EventA event) {
+        }
+
+        @Subscribe
+        public void onEventB(EventB event) {
+        }
+
+        @Produce
+        public EventA produceEventA() {
+            return null;
+        }
+
+        @Produce
+        public EventAA produceEventAA() {
+            return null;
+        }
+
+        @Produce
+        public EventAAA produceEventAAA() {
+            return null;
+        }
+    }
+
+    @Test
+    public void getProducerMethod() {
+        RegisteredClass registeredClass = new RegisteredClass(ClassGetProducerMethod.class);
+        assertNotNull(registeredClass.getProducerMethod(EventA.class));
+        assertNotNull(registeredClass.getProducerMethod(EventAA.class));
+        assertNotNull(registeredClass.getProducerMethod(EventAAA.class));
+        assertNull(registeredClass.getProducerMethod(EventB.class));
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Functionality: Subscribers
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,9 +1384,9 @@ public class RegisteredClassTest {
     public void testClassSubscriberEventA() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassSubscriberEventA.class);
         assertTrue(registeredClass.hasAnySubscribers());
-        assertNotNull(registeredClass.getSubscribedEvents());
-        assertEquals(1, registeredClass.getSubscribedEvents().size());
-        assertEquals(1, registeredClass.getSubscribedMethods(EventA.class).size());
+        assertNotNull(registeredClass.getSubscribedEventClasses());
+        assertEquals(1, registeredClass.getSubscribedEventClasses().size());
+        assertEquals(1, registeredClass.getSubscriberMethods(EventA.class).size());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,9 +1408,9 @@ public class RegisteredClassTest {
     public void testClassSubscriberEventFA() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassSubscriberEventFA.class);
         assertTrue(registeredClass.hasAnySubscribers());
-        assertNotNull(registeredClass.getSubscribedEvents());
-        assertEquals(1, registeredClass.getSubscribedEvents().size());
-        assertEquals(1, registeredClass.getSubscribedMethods(EventA.class).size());
+        assertNotNull(registeredClass.getSubscribedEventClasses());
+        assertEquals(1, registeredClass.getSubscribedEventClasses().size());
+        assertEquals(1, registeredClass.getSubscriberMethods(EventA.class).size());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,9 +1433,9 @@ public class RegisteredClassTest {
     public void testClassSubscriberEventAA() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassSubscriberEventAA.class);
         assertTrue(registeredClass.hasAnySubscribers());
-        assertNotNull(registeredClass.getSubscribedEvents());
-        assertEquals(1, registeredClass.getSubscribedEvents().size());
-        assertEquals(2, registeredClass.getSubscribedMethods(EventA.class).size());
+        assertNotNull(registeredClass.getSubscribedEventClasses());
+        assertEquals(1, registeredClass.getSubscribedEventClasses().size());
+        assertEquals(2, registeredClass.getSubscriberMethods(EventA.class).size());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -163,9 +1461,9 @@ public class RegisteredClassTest {
     public void testClassSubscriberEventFAA() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassSubscriberEventFAA.class);
         assertTrue(registeredClass.hasAnySubscribers());
-        assertNotNull(registeredClass.getSubscribedEvents());
-        assertEquals(1, registeredClass.getSubscribedEvents().size());
-        assertEquals(2, registeredClass.getSubscribedMethods(EventA.class).size());
+        assertNotNull(registeredClass.getSubscribedEventClasses());
+        assertEquals(1, registeredClass.getSubscribedEventClasses().size());
+        assertEquals(2, registeredClass.getSubscriberMethods(EventA.class).size());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -188,10 +1486,10 @@ public class RegisteredClassTest {
     public void testClassSubscriberEventAB() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassSubscriberEventAB.class);
         assertTrue(registeredClass.hasAnySubscribers());
-        assertNotNull(registeredClass.getSubscribedEvents());
-        assertEquals(2, registeredClass.getSubscribedEvents().size());
-        assertEquals(1, registeredClass.getSubscribedMethods(EventA.class).size());
-        assertEquals(1, registeredClass.getSubscribedMethods(EventB.class).size());
+        assertNotNull(registeredClass.getSubscribedEventClasses());
+        assertEquals(2, registeredClass.getSubscribedEventClasses().size());
+        assertEquals(1, registeredClass.getSubscriberMethods(EventA.class).size());
+        assertEquals(1, registeredClass.getSubscriberMethods(EventB.class).size());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -217,10 +1515,10 @@ public class RegisteredClassTest {
     public void testClassSubscriberEventFAB() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassSubscriberEventFAB.class);
         assertTrue(registeredClass.hasAnySubscribers());
-        assertNotNull(registeredClass.getSubscribedEvents());
-        assertEquals(2, registeredClass.getSubscribedEvents().size());
-        assertEquals(1, registeredClass.getSubscribedMethods(EventA.class).size());
-        assertEquals(1, registeredClass.getSubscribedMethods(EventB.class).size());
+        assertNotNull(registeredClass.getSubscribedEventClasses());
+        assertEquals(2, registeredClass.getSubscribedEventClasses().size());
+        assertEquals(1, registeredClass.getSubscriberMethods(EventA.class).size());
+        assertEquals(1, registeredClass.getSubscriberMethods(EventB.class).size());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -254,10 +1552,10 @@ public class RegisteredClassTest {
     public void testClassSubscriberEventFAABB() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassSubscriberEventFAABB.class);
         assertTrue(registeredClass.hasAnySubscribers());
-        assertNotNull(registeredClass.getSubscribedEvents());
-        assertEquals(2, registeredClass.getSubscribedEvents().size());
-        assertEquals(2, registeredClass.getSubscribedMethods(EventA.class).size());
-        assertEquals(2, registeredClass.getSubscribedMethods(EventB.class).size());
+        assertNotNull(registeredClass.getSubscribedEventClasses());
+        assertEquals(2, registeredClass.getSubscribedEventClasses().size());
+        assertEquals(2, registeredClass.getSubscriberMethods(EventA.class).size());
+        assertEquals(2, registeredClass.getSubscriberMethods(EventB.class).size());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -378,6 +1676,10 @@ public class RegisteredClassTest {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Functionality: Producers
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     private static class ClassNoProducerA {}
@@ -455,7 +1757,7 @@ public class RegisteredClassTest {
     public void testClassProducerEventA() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassProducerEventA.class);
         assertTrue(registeredClass.hasAnyProducers());
-        assertNotNull(registeredClass.getProducerMethodForClassOrAnySubclass(EventA.class));
+        assertNotNull(registeredClass.getProducerMethod(EventA.class));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -478,7 +1780,7 @@ public class RegisteredClassTest {
     public void testClassProducerEventFA() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassProducerEventFA.class);
         assertTrue(registeredClass.hasAnyProducers());
-        assertNotNull(registeredClass.getProducerMethodForClassOrAnySubclass(EventA.class));
+        assertNotNull(registeredClass.getProducerMethod(EventA.class));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -503,8 +1805,8 @@ public class RegisteredClassTest {
     public void testClassProducerEventAB() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassProducerEventAB.class);
         assertTrue(registeredClass.hasAnyProducers());
-        assertNotNull(registeredClass.getProducerMethodForClassOrAnySubclass(EventA.class));
-        assertNotNull(registeredClass.getProducerMethodForClassOrAnySubclass(EventB.class));
+        assertNotNull(registeredClass.getProducerMethod(EventA.class));
+        assertNotNull(registeredClass.getProducerMethod(EventB.class));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -532,8 +1834,8 @@ public class RegisteredClassTest {
     public void testClassProducerEventFAB() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassProducerEventFAB.class);
         assertTrue(registeredClass.hasAnyProducers());
-        assertNotNull(registeredClass.getProducerMethodForClassOrAnySubclass(EventA.class));
-        assertNotNull(registeredClass.getProducerMethodForClassOrAnySubclass(EventB.class));
+        assertNotNull(registeredClass.getProducerMethod(EventA.class));
+        assertNotNull(registeredClass.getProducerMethod(EventB.class));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

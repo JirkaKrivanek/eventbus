@@ -53,8 +53,8 @@ class RegisteredEvents {
     void register(Bus bus, Object objectToRegister) {
         RegisteredClass registeredClass = mRegisteredClasses.getRegisteredClass(objectToRegister, true);
         DeliveryContext deliveryContext = DeliveryContextManagers.getCurrentDeliveryContext();
-        Set<Class<?>> subscribedEvents = registeredClass.getSubscribedEvents();
-        Set<Class<?>> producedEvents = registeredClass.getProducedEvents();
+        Set<Class<?>> subscribedEvents = registeredClass.getSubscribedEventClasses();
+        Set<Class<?>> producedEvents = registeredClass.getProducedEventClasses();
 
         // Registers subscriber methods
         if (subscribedEvents != null) {
@@ -67,7 +67,7 @@ class RegisteredEvents {
                         mRegisteredEvents.put(eventClass, registeredEvent);
                     }
                 }
-                Set<Method> subscriberMethods = registeredClass.getSubscribedMethods(eventClass);
+                Set<Method> subscriberMethods = registeredClass.getSubscriberMethods(eventClass);
                 registeredEvent.register(bus, objectToRegister, subscriberMethods, deliveryContext);
             }
         }
@@ -83,7 +83,7 @@ class RegisteredEvents {
                         mRegisteredEvents.put(eventClass, registeredEvent);
                     }
                 }
-                Method producerMethod = registeredClass.getProducerMethodForClassExactly(eventClass);
+                Method producerMethod = registeredClass.getProducerMethod(eventClass);
                 registeredEvent.register(bus, objectToRegister, producerMethod, deliveryContext);
             }
         }
@@ -180,7 +180,7 @@ class RegisteredEvents {
 
         // Unregisters subscriber methods
         if (registeredClass != null) {
-            Set<Class<?>> subscribedEvents = registeredClass.getSubscribedEvents();
+            Set<Class<?>> subscribedEvents = registeredClass.getSubscribedEventClasses();
             if (subscribedEvents != null) {
                 for (Class<?> eventClass : subscribedEvents) {
                     RegisteredEvent registeredEvent;

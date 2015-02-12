@@ -54,7 +54,7 @@ public class EventDelivererTest {
         RegisteredClass registeredClass = new RegisteredClass(eventSubscriber.getClass());
         DeliveryContextTest deliveryContextTest = new DeliveryContextTest();
         EventDeliverer eventDeliverer = new EventDeliverer(null, eventSubscriber, deliveryContextTest);
-        eventDeliverer.setSubscriberMethods(registeredClass.getSubscribedMethods(Event.class));
+        eventDeliverer.setSubscriberMethods(registeredClass.getSubscriberMethods(Event.class));
         Event event = new Event();
         mDeliveredEvent = null;
         eventDeliverer.requestCallSubscriberMethods(event);
@@ -70,7 +70,7 @@ public class EventDelivererTest {
         RegisteredClass registeredClass = new RegisteredClass(eventSubscriber.getClass());
         DeliveryContextTest deliveryContextTest = new DeliveryContextTest();
         EventDeliverer eventDeliverer = new EventDeliverer(null, eventSubscriber, deliveryContextTest);
-        eventDeliverer.setSubscriberMethods(registeredClass.getSubscribedMethods(Event.class));
+        eventDeliverer.setSubscriberMethods(registeredClass.getSubscriberMethods(Event.class));
         Event event = new Event();
         mDeliveredEvent = null;
         eventDeliverer.clearOut();
@@ -86,7 +86,7 @@ public class EventDelivererTest {
         RegisteredClass registeredClass = new RegisteredClass(eventSubscriber.getClass());
         DeliveryContextTest deliveryContextTest = new DeliveryContextTest();
         EventDeliverer eventDeliverer = new EventDeliverer(null, eventSubscriber, deliveryContextTest);
-        eventDeliverer.setSubscriberMethods(registeredClass.getSubscribedMethods(Event.class));
+        eventDeliverer.setSubscriberMethods(registeredClass.getSubscriberMethods(Event.class));
         Event event = new Event();
         mDeliveredEvent = null;
         eventDeliverer.requestCallSubscriberMethods(event);
