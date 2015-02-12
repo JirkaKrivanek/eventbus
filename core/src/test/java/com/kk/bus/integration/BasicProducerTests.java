@@ -74,6 +74,15 @@ public class BasicProducerTests {
     private static class NormalDeliveryEventA {}
 
 
+    private static class NormalDeliveryEventAA extends NormalDeliveryEventA {}
+
+
+    private static class NormalDeliveryEventAAA extends NormalDeliveryEventAA {}
+
+
+    private static class NormalDeliveryEventB {}
+
+
     public static class NormalDeliveryProducerA {
 
         @Produce
@@ -123,6 +132,50 @@ public class BasicProducerTests {
         @Subscribe
         public void onEventA(NormalDeliveryEventA event) {
             eventCount++;
+        }
+    }
+
+
+    public static class NormalDeliveryProducerAndSubscriberInOne {
+
+        int producedEventCountA;
+        int deliveredEventCountA;
+        int deliveredEventCountAA;
+        int deliveredEventCountAAA;
+
+        int producedEventCountB;
+        int deliveredEventCountB;
+
+        @Produce
+        public NormalDeliveryEventAAA produceEventAAA() {
+            producedEventCountA++;
+            return new NormalDeliveryEventAAA();
+        }
+
+        @Subscribe
+        public void onEventA(NormalDeliveryEventA event) {
+            deliveredEventCountA++;
+        }
+
+        @Subscribe
+        public void onEventAA(NormalDeliveryEventAA event) {
+            deliveredEventCountAA++;
+        }
+
+        @Subscribe
+        public void onEventAAA(NormalDeliveryEventAAA event) {
+            deliveredEventCountAAA++;
+        }
+
+        @Produce
+        public NormalDeliveryEventB produceEventB() {
+            producedEventCountB++;
+            return new NormalDeliveryEventB();
+        }
+
+        @Subscribe
+        public void onEventB(NormalDeliveryEventB event) {
+            deliveredEventCountB++;
         }
     }
 
@@ -196,6 +249,18 @@ public class BasicProducerTests {
         assertEquals(1, subscriberB.eventCount);
         assertEquals(1, subscriberC.eventCount);
         assertEquals(1, subscriberD.eventCount);
+    }
+
+    @Test
+    public void normalProduction_producerAndSubscriberInOne() {
+        NormalDeliveryProducerAndSubscriberInOne ps = new NormalDeliveryProducerAndSubscriberInOne();
+        mBus.register(ps);
+        assertEquals(1, ps.producedEventCountA);
+        assertEquals(1, ps.deliveredEventCountA);
+        assertEquals(1, ps.deliveredEventCountAA);
+        assertEquals(1, ps.deliveredEventCountAAA);
+        assertEquals(1, ps.producedEventCountB);
+        assertEquals(1, ps.deliveredEventCountB);
     }
 
     @Test

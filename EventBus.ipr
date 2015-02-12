@@ -67,8 +67,9 @@
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false" />
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
-    <list size="1">
-      <item index="0" class="java.lang.String" itemvalue="com.kk.bus.Subscribe" />
+    <list size="2">
+      <item index="0" class="java.lang.String" itemvalue="com.kk.bus.Produce" />
+      <item index="1" class="java.lang.String" itemvalue="com.kk.bus.Subscribe" />
     </list>
   </component>
   <component name="FrameworkDetectionExcludesConfiguration">
