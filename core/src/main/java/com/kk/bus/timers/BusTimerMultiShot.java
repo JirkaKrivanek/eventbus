@@ -91,14 +91,17 @@ public class BusTimerMultiShot extends BusTimer {
      */
     @Override
     void handleTimerTick(Bus bus) {
-        Object event;
+        Object event = null;
         synchronized (this) {
-            mTickCounter++;
-            if (mTickCounter > mTickCount) {
-                stop();
+            if (mRunning) {
+                if (mTickCounter < mTickCount) {
+                    event = mEvent;
+                    mNextTickMs += mPeriodMs;
+                }
+                if (++mTickCounter >= mTickCount) {
+                    stop();
+                }
             }
-            mNextTickMs += mPeriodMs;
-            event = mEvent;
         }
         if (event != null) {
             bus.post(event);

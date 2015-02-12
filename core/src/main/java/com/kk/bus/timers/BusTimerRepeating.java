@@ -85,10 +85,12 @@ public class BusTimerRepeating extends BusTimer {
      */
     @Override
     void handleTimerTick(Bus bus) {
-        Object event;
+        Object event = null;
         synchronized (this) {
-            mNextTickMs += mPeriodMs;
-            event = mEvent;
+            if (mRunning) {
+                mNextTickMs += mPeriodMs;
+                event = mEvent;
+            }
         }
         if (event != null) {
             bus.post(event);

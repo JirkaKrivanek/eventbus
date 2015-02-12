@@ -31,6 +31,10 @@ public class BusTimers extends Thread {
         start();
     }
 
+    public long getCurrentMs() {
+        return System.currentTimeMillis();
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,14 +101,13 @@ public class BusTimers extends Thread {
 
     private void fireEventOnExpiredTimers(long currentMs) {
         for (BusTimer busTimer : mActiveTimers) {
-            long tickInMs = busTimer.mNextTickMs - currentMs;
-            if (tickInMs <= 0) {
-                busTimer.handleTimerTick(mBus);
+            long nextTickMs = busTimer.mNextTickMs;
+            if (nextTickMs > 0) {
+                long tickInMs = nextTickMs - currentMs;
+                if (tickInMs <= 0) {
+                    busTimer.handleTimerTick(mBus);
+                }
             }
         }
-    }
-
-    private long getCurrentMs() {
-        return System.currentTimeMillis();
     }
 }

@@ -10,7 +10,7 @@ import com.kk.bus.Bus;
  *
  * @author Jiri Krivanek
  */
-public class BusTimerOneShot extends BusTimer {
+public class BusTimerSingleShot extends BusTimer {
 
     private Object  mEvent;
     private boolean mRunning;
@@ -24,7 +24,7 @@ public class BusTimerOneShot extends BusTimer {
      * @param delayMs
      *         The delay in milliseconds after which the event fil be delivered.
      */
-    public BusTimerOneShot(BusTimers busTimers, Object event, long delayMs) {
+    public BusTimerSingleShot(BusTimers busTimers, Object event, long delayMs) {
         super(busTimers);
         mEvent = event;
         mRunning = false;
@@ -85,10 +85,12 @@ public class BusTimerOneShot extends BusTimer {
      */
     @Override
     void handleTimerTick(Bus bus) {
-        stop();
-        Object event;
+        Object event = null;
         synchronized (this) {
-            event = mEvent;
+            if (mRunning) {
+                stop();
+                event = mEvent;
+            }
         }
         if (event != null) {
             bus.post(event);
