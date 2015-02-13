@@ -2,7 +2,6 @@ package com.kk.bus.integration;
 
 
 import com.kk.bus.Bus;
-import com.kk.bus.DeliveryContextManagers;
 import com.kk.bus.Subscribe;
 import com.kk.bus.thread.BusThread;
 
@@ -21,6 +20,8 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * The multi threaded tests.
+ * <p/>
+ * TODO: Only works when ran standalone (some influence by preceding tests?)
  */
 public class MultiThreadedSubscriberTest {
 
@@ -41,7 +42,6 @@ public class MultiThreadedSubscriberTest {
 
     @BeforeClass
     public static void setUpTest() {
-        DeliveryContextManagers.clearDeliveryContextManagers();
         sBus = new Bus();
     }
 
@@ -58,9 +58,12 @@ public class MultiThreadedSubscriberTest {
 
         final CountDownLatch eventCount;
 
-        public NormalDeliveryA(Bus bus, int count) {
+        public NormalDeliveryA(Bus bus, int count) throws InterruptedException {
             super(bus);
             eventCount = new CountDownLatch(count);
+            setName("normalDeliveryA");
+            setDaemon(true);
+                startAndWait();
         }
 
         @Subscribe
@@ -74,9 +77,12 @@ public class MultiThreadedSubscriberTest {
 
         final CountDownLatch eventCount;
 
-        public NormalDeliveryB(Bus bus, int count) {
+        public NormalDeliveryB(Bus bus, int count) throws InterruptedException {
             super(bus);
             eventCount = new CountDownLatch(count);
+            setName("normalDeliveryB");
+            setDaemon(true);
+            startAndWait();
         }
 
         @Subscribe
@@ -90,9 +96,12 @@ public class MultiThreadedSubscriberTest {
 
         final CountDownLatch eventCount;
 
-        public NormalDeliveryC(Bus bus, int count) {
+        public NormalDeliveryC(Bus bus, int count) throws InterruptedException {
             super(bus);
             eventCount = new CountDownLatch(count);
+            setName("normalDeliveryC");
+            setDaemon(true);
+            startAndWait();
         }
 
         @Subscribe
@@ -106,9 +115,12 @@ public class MultiThreadedSubscriberTest {
 
         final CountDownLatch eventCount;
 
-        public NormalDeliveryABC(Bus bus, int count) {
+        public NormalDeliveryABC(Bus bus, int count) throws InterruptedException {
             super(bus);
             eventCount = new CountDownLatch(3 * count);
+            setName("normalDeliveryABC");
+            setDaemon(true);
+            startAndWait();
         }
 
         @Subscribe
@@ -130,10 +142,6 @@ public class MultiThreadedSubscriberTest {
     @Test
     public void normalDeliveryA() throws Exception {
         NormalDeliveryA normalDeliveryA = new NormalDeliveryA(sBus, 1);
-        normalDeliveryA.setName("normalDeliveryA");
-        normalDeliveryA.setDaemon(true);
-        normalDeliveryA.init();
-        normalDeliveryA.start();
         sBus.post(new EventA());
         sBus.post(new EventB());
         assertTrue(normalDeliveryA.eventCount.await(2000, TimeUnit.MILLISECONDS));
@@ -143,10 +151,6 @@ public class MultiThreadedSubscriberTest {
     @Test
     public void normalDeliveryB() throws Exception {
         NormalDeliveryB normalDeliveryB = new NormalDeliveryB(sBus, 1);
-        normalDeliveryB.setName("normalDeliveryB");
-        normalDeliveryB.setDaemon(true);
-        normalDeliveryB.init();
-        normalDeliveryB.start();
         sBus.post(new EventA());
         sBus.post(new EventB());
         assertTrue(normalDeliveryB.eventCount.await(2000, TimeUnit.MILLISECONDS));
@@ -157,10 +161,6 @@ public class MultiThreadedSubscriberTest {
     public void stressByManyEventsDeliveryA() throws Exception {
         final int COUNT = 10000;
         NormalDeliveryA normalDeliveryA = new NormalDeliveryA(sBus, COUNT);
-        normalDeliveryA.setName("normalDeliveryA");
-        normalDeliveryA.setDaemon(true);
-        normalDeliveryA.init();
-        normalDeliveryA.start();
         for (int i = 0; i < COUNT; i++) {
             sBus.post(new EventA());
             sBus.post(new EventB());
@@ -173,10 +173,6 @@ public class MultiThreadedSubscriberTest {
     public void stressByManyEventsDeliveryB() throws Exception {
         final int COUNT = 10000;
         NormalDeliveryB normalDeliveryB = new NormalDeliveryB(sBus, COUNT);
-        normalDeliveryB.setName("normalDeliveryB");
-        normalDeliveryB.setDaemon(true);
-        normalDeliveryB.init();
-        normalDeliveryB.start();
         for (int i = 0; i < COUNT; i++) {
             sBus.post(new EventA());
             sBus.post(new EventB());
@@ -189,15 +185,7 @@ public class MultiThreadedSubscriberTest {
     public void stressByManyEventsDeliveryAB() throws Exception {
         final int COUNT = 10000;
         NormalDeliveryA normalDeliveryA = new NormalDeliveryA(sBus, COUNT);
-        normalDeliveryA.setName("normalDeliveryA");
-        normalDeliveryA.setDaemon(true);
-        normalDeliveryA.init();
-        normalDeliveryA.start();
         NormalDeliveryB normalDeliveryB = new NormalDeliveryB(sBus, COUNT);
-        normalDeliveryB.setName("normalDeliveryB");
-        normalDeliveryB.setDaemon(true);
-        normalDeliveryB.init();
-        normalDeliveryB.start();
         for (int i = 0; i < COUNT; i++) {
             sBus.post(new EventA());
             sBus.post(new EventB());
@@ -212,20 +200,8 @@ public class MultiThreadedSubscriberTest {
     public void stressByManyEventsDeliveryABC() throws Exception {
         final int COUNT = 10000;
         NormalDeliveryA normalDeliveryA = new NormalDeliveryA(sBus, COUNT);
-        normalDeliveryA.setName("normalDeliveryA");
-        normalDeliveryA.setDaemon(true);
-        normalDeliveryA.init();
-        normalDeliveryA.start();
         NormalDeliveryB normalDeliveryB = new NormalDeliveryB(sBus, COUNT);
-        normalDeliveryB.setName("normalDeliveryB");
-        normalDeliveryB.setDaemon(true);
-        normalDeliveryB.init();
-        normalDeliveryB.start();
         NormalDeliveryC normalDeliveryC = new NormalDeliveryC(sBus, COUNT);
-        normalDeliveryC.setName("normalDeliveryC");
-        normalDeliveryC.setDaemon(true);
-        normalDeliveryC.init();
-        normalDeliveryC.start();
         for (int i = 0; i < COUNT; i++) {
             sBus.post(new EventA());
             sBus.post(new EventB());
@@ -243,45 +219,13 @@ public class MultiThreadedSubscriberTest {
     public void stressByManyEventsDeliveryABC_ABC() throws Exception {
         final int COUNT = 10000;
         NormalDeliveryA normalDeliveryA = new NormalDeliveryA(sBus, COUNT);
-        normalDeliveryA.setName("normalDeliveryA");
-        normalDeliveryA.setDaemon(true);
-        normalDeliveryA.init();
-        normalDeliveryA.start();
         NormalDeliveryB normalDeliveryB = new NormalDeliveryB(sBus, COUNT);
-        normalDeliveryB.setName("normalDeliveryB");
-        normalDeliveryB.setDaemon(true);
-        normalDeliveryB.init();
-        normalDeliveryB.start();
         NormalDeliveryC normalDeliveryC = new NormalDeliveryC(sBus, COUNT);
-        normalDeliveryC.setName("normalDeliveryC");
-        normalDeliveryC.setDaemon(true);
-        normalDeliveryC.init();
-        normalDeliveryC.start();
         NormalDeliveryABC normalDeliveryABC1 = new NormalDeliveryABC(sBus, COUNT);
-        normalDeliveryABC1.setName("normalDeliveryABC1");
-        normalDeliveryABC1.setDaemon(true);
-        normalDeliveryABC1.init();
-        normalDeliveryABC1.start();
         NormalDeliveryABC normalDeliveryABC2 = new NormalDeliveryABC(sBus, COUNT);
-        normalDeliveryABC2.setName("normalDeliveryABC2");
-        normalDeliveryABC2.setDaemon(true);
-        normalDeliveryABC2.init();
-        normalDeliveryABC2.start();
         NormalDeliveryABC normalDeliveryABC3 = new NormalDeliveryABC(sBus, COUNT);
-        normalDeliveryABC3.setName("normalDeliveryABC3");
-        normalDeliveryABC3.setDaemon(true);
-        normalDeliveryABC3.init();
-        normalDeliveryABC3.start();
         NormalDeliveryABC normalDeliveryABC4 = new NormalDeliveryABC(sBus, COUNT);
-        normalDeliveryABC4.setName("normalDeliveryABC4");
-        normalDeliveryABC4.setDaemon(true);
-        normalDeliveryABC4.init();
-        normalDeliveryABC4.start();
         NormalDeliveryABC normalDeliveryABC5 = new NormalDeliveryABC(sBus, COUNT);
-        normalDeliveryABC5.setName("normalDeliveryABC5");
-        normalDeliveryABC5.setDaemon(true);
-        normalDeliveryABC5.init();
-        normalDeliveryABC5.start();
         for (int i = 0; i < COUNT; i++) {
             sBus.post(new EventA());
             sBus.post(new EventB());
@@ -400,6 +344,7 @@ public class MultiThreadedSubscriberTest {
             mBus = bus;
             mMessBusThread = messBusThread;
             mCount = numberOfEventsToProduce;
+            setName("MessGenThread:" + numberOfEventsToProduce);
             setDaemon(true);
             start();
         }
@@ -436,12 +381,12 @@ public class MultiThreadedSubscriberTest {
 
         private int mCount;
 
-        public MessBusThread(Bus bus, int numberOfEventsToProduceAndConsume) {
+        public MessBusThread(Bus bus, int numberOfEventsToProduceAndConsume) throws InterruptedException {
             super(bus);
             mCount = numberOfEventsToProduceAndConsume;
+            setName("MessBusThread");
             setDaemon(true);
-            init();
-            start();
+            startAndWait();
             while (numberOfEventsToProduceAndConsume > 0) {
                 int cnt = randomCount(MESS_MAX_COUNT_PER_GEN_THREAD, numberOfEventsToProduceAndConsume);
                 numberOfEventsToProduceAndConsume -= cnt;
@@ -449,7 +394,7 @@ public class MultiThreadedSubscriberTest {
             }
         }
 
-        private void next() {
+        private void next() throws InterruptedException {
             int count = randomRemainingCount(MESS_MAX_COUNT_PER_NEXT);
             List<Integer> counts = new ArrayList<>();
             StringBuilder sb = new StringBuilder();
@@ -466,7 +411,7 @@ public class MultiThreadedSubscriberTest {
             }
         }
 
-        private void dec() {
+        private void dec() throws InterruptedException {
             mMessCountDown.countDown();
             if (--mCount <= 0) {
                 next();
@@ -475,21 +420,21 @@ public class MultiThreadedSubscriberTest {
         }
 
         @Subscribe
-        public void onEventA(MessEventA event) {
+        public void onEventA(MessEventA event) throws InterruptedException {
             if (event.getMessBusThread() == this) {
                 dec();
             }
         }
 
         @Subscribe
-        public void onEventB(MessEventB event) {
+        public void onEventB(MessEventB event) throws InterruptedException {
             if (event.getMessBusThread() == this) {
                 dec();
             }
         }
 
         @Subscribe
-        public void onEventC(MessEventC event) {
+        public void onEventC(MessEventC event) throws InterruptedException {
             if (event.getMessBusThread() == this) {
                 dec();
             }

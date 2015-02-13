@@ -7,6 +7,7 @@ import com.kk.bus.EventDeliverer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Thread which handles the events delivered via the bus.
@@ -20,6 +21,7 @@ public class BusThread extends Thread {
 
     private static final int MAX_POOL_SIZE = 100;
     private final Bus mBus;
+    private final CountDownLatch        mStarted     = new CountDownLatch(1);
     private final Queue<BusThreadEvent> mEventsQueue = new LinkedList<>();
     private final Queue<BusThreadEvent> mEventsPool  = new LinkedList<>();
     private final DeliveryContextThread mDeliveryContextThread;
@@ -33,8 +35,14 @@ public class BusThread extends Thread {
      *         The event bus to which the thread will be attached.
      */
     public BusThread(Bus bus) {
+        super();
         mBus = bus;
         mDeliveryContextThread = new DeliveryContextThread(this);
+    }
+
+    public void startAndWait() throws InterruptedException {
+        start();
+        mStarted.await();
     }
 
     /**
@@ -83,6 +91,7 @@ public class BusThread extends Thread {
      */
     @Override
     public void run() {
+        init();
         try {
             loop();
         } finally {
@@ -92,10 +101,13 @@ public class BusThread extends Thread {
 
     /**
      * Initializes the thread for bus.
+     *
+     * <dl><dt>Attention:</dt><dd>Must be called from within the context of the</dd></dl>
      */
-    public void init() {
+    void init() {
         DeliveryContextManagerThread.registerDeliveryContext(mDeliveryContextThread);
         mBus.register(this);
+        mStarted.countDown();
     }
 
     /**

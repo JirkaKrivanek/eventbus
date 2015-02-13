@@ -1,13 +1,38 @@
 package com.kk.bus;
 
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class RegisteredEventsTest {
 
     private static class EventA {}
+
+
+    private DeliveryContext        mDeliveryContext;
+    private DeliveryContextManager mDeliveryContextManager;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @Before
+    public void setUp() {
+        mDeliveryContext = mock(DeliveryContext.class);
+        mDeliveryContextManager = mock(DeliveryContextManager.class);
+        when(mDeliveryContextManager.getCurrentDeliveryContext()).thenReturn(mDeliveryContext);
+        DeliveryContextManagers.registerDeliveryContextManager(mDeliveryContextManager);
+    }
+
+    @After
+    public void cleanUp() {
+        DeliveryContextManagers.unregisterDeliveryContextManager(mDeliveryContextManager);
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -2,7 +2,6 @@ package com.kk.bus.integration;
 
 
 import com.kk.bus.Bus;
-import com.kk.bus.DeliveryContextManagers;
 import com.kk.bus.Produce;
 import com.kk.bus.Subscribe;
 import com.kk.bus.thread.BusThread;
@@ -34,7 +33,6 @@ public class MultiThreadedProducerTest {
 
     @BeforeClass
     public static void setUpTest() {
-        DeliveryContextManagers.clearDeliveryContextManagers();
         sBus = new Bus();
     }
 
@@ -51,13 +49,12 @@ public class MultiThreadedProducerTest {
 
         final CountDownLatch eventCount;
 
-        public NormalProduction_ProducerA(Bus bus, int count) {
+        public NormalProduction_ProducerA(Bus bus, int count) throws InterruptedException {
             super(bus);
             eventCount = new CountDownLatch(count);
             setDaemon(true);
             setName("Bus: Producer A");
-            init();
-            start();
+            startAndWait();
         }
 
         @Produce
@@ -72,13 +69,12 @@ public class MultiThreadedProducerTest {
 
         final CountDownLatch eventCount;
 
-        public NormalProduction_SubscriberA(Bus bus, int count) {
+        public NormalProduction_SubscriberA(Bus bus, int count) throws InterruptedException {
             super(bus);
             eventCount = new CountDownLatch(count);
             setDaemon(true);
             setName("Bus: Subscriber A");
-            init();
-            start();
+            startAndWait();
         }
 
         @Subscribe
@@ -93,14 +89,13 @@ public class MultiThreadedProducerTest {
         final CountDownLatch eventProduceCount;
         final CountDownLatch eventSubscribeCount;
 
-        public NormalProduction_ProducerAndSubscriberInOneA(Bus bus) {
+        public NormalProduction_ProducerAndSubscriberInOneA(Bus bus) throws InterruptedException {
             super(bus);
             eventProduceCount = new CountDownLatch(1);
             eventSubscribeCount = new CountDownLatch(1);
             setDaemon(true);
             setName("Bus: Subscriber A");
-            init();
-            start();
+            startAndWait();
         }
 
         @Produce

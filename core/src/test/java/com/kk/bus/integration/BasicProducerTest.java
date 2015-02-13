@@ -57,7 +57,6 @@ public class BasicProducerTest {
 
     @Before
     public void setUpTest() {
-        DeliveryContextManagers.clearDeliveryContextManagers();
         DeliveryContextManagers.registerDeliveryContextManager(new TestDeliveryContextManager());
         mBus = new Bus();
     }

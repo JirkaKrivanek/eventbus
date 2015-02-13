@@ -4,7 +4,6 @@ package com.kk.bus;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -23,7 +22,11 @@ public class DeliveryContextManagersTest {
         when(deliveryContextManager.isCurrentDeliveryContext(deliveryContext2)).thenReturn(false);
 
         // No delivery context manager registered yet
-        assertNull(DeliveryContextManagers.getCurrentDeliveryContext());
+        try {
+            DeliveryContextManagers.getCurrentDeliveryContext();
+            assertTrue(false);
+        } catch (IllegalStateException e) {
+        }
         assertFalse(DeliveryContextManagers.isCurrentDeliveryContext(null));
         assertFalse(DeliveryContextManagers.isCurrentDeliveryContext(deliveryContext1));
         assertFalse(DeliveryContextManagers.isCurrentDeliveryContext(deliveryContext2));
@@ -34,10 +37,26 @@ public class DeliveryContextManagersTest {
         // Duplicate registration must not throw exception
         DeliveryContextManagers.registerDeliveryContextManager(deliveryContextManager);
 
-        // No delivery context manager registered yet
+        // Delivery context manager registered
         assertSame(deliveryContext1, DeliveryContextManagers.getCurrentDeliveryContext());
         assertFalse(DeliveryContextManagers.isCurrentDeliveryContext(null));
         assertTrue(DeliveryContextManagers.isCurrentDeliveryContext(deliveryContext1));
+        assertFalse(DeliveryContextManagers.isCurrentDeliveryContext(deliveryContext2));
+
+        // Unregister delivery context manager
+        DeliveryContextManagers.unregisterDeliveryContextManager(deliveryContextManager);
+
+        // Duplicate unregistration must not throw exception
+        DeliveryContextManagers.unregisterDeliveryContextManager(deliveryContextManager);
+
+        // No delivery context manager registered after all
+        try {
+            DeliveryContextManagers.getCurrentDeliveryContext();
+            assertTrue(false);
+        } catch (IllegalStateException e) {
+        }
+        assertFalse(DeliveryContextManagers.isCurrentDeliveryContext(null));
+        assertFalse(DeliveryContextManagers.isCurrentDeliveryContext(deliveryContext1));
         assertFalse(DeliveryContextManagers.isCurrentDeliveryContext(deliveryContext2));
     }
 }
