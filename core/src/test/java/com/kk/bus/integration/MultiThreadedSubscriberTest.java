@@ -20,8 +20,6 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * The multi threaded tests.
- * <p/>
- * TODO: Only works when ran standalone (some influence by preceding tests?)
  */
 public class MultiThreadedSubscriberTest {
 

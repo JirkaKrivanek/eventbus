@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.spy;
 
-public class SingleShotTimer {
+public class SingleShotTimerTest {
 
     @Test
     public void normalDelivery() throws Exception {
