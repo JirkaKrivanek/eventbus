@@ -7,7 +7,7 @@ The planned features are:
   - Subscribers - done
   - Producers - done
 - Multi threading support with delivering on the same thread which registered - done
-- Timed events posting with repeated and cancel option
+- Timed events posting with repeated and cancel option - done (not completely covered by unit tests)
 - Android main UI thread support - done
 - AWT main loop support - done
 

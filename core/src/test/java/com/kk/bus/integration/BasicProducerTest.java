@@ -9,6 +9,7 @@ import com.kk.bus.EventDeliverer;
 import com.kk.bus.Produce;
 import com.kk.bus.Subscribe;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,8 +18,6 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class BasicProducerTest {
-
-    private Bus mBus;
 
 
     private static class TestDeliveryContext extends DeliveryContext {
@@ -55,10 +54,24 @@ public class BasicProducerTest {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+    private Bus                        mBus;
+    private TestDeliveryContextManager mTestDeliveryContextManager;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     @Before
-    public void setUpTest() {
-        DeliveryContextManagers.registerDeliveryContextManager(new TestDeliveryContextManager());
+    public void setUp() {
+        mTestDeliveryContextManager = new TestDeliveryContextManager();
+        DeliveryContextManagers.registerDeliveryContextManager(mTestDeliveryContextManager);
         mBus = new Bus();
+    }
+
+    @After
+    public void cleanUp() {
+        DeliveryContextManagers.unregisterDeliveryContextManager(mTestDeliveryContextManager);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

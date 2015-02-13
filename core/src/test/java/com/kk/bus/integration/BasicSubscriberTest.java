@@ -8,6 +8,7 @@ import com.kk.bus.DeliveryContextManagers;
 import com.kk.bus.EventDeliverer;
 import com.kk.bus.Subscribe;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,9 +18,6 @@ import static org.junit.Assert.assertEquals;
 
 public class BasicSubscriberTest {
 
-    private Bus mBus;
-
-
     private static class TestDeliveryContext extends DeliveryContext {
 
         @Override
@@ -28,7 +26,8 @@ public class BasicSubscriberTest {
         }
 
         @Override
-        protected void requestCallProducerMethod(EventDeliverer eventDeliverer, List<EventDeliverer> subscriberDeliverers) {
+        protected void requestCallProducerMethod(EventDeliverer eventDeliverer,
+                                                 List<EventDeliverer> subscriberDeliverers) {
         }
     }
 
@@ -52,10 +51,23 @@ public class BasicSubscriberTest {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private Bus                        mBus;
+    private TestDeliveryContextManager mTestDeliveryContextManager;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     @Before
-    public void setUpTest() {
-        DeliveryContextManagers.registerDeliveryContextManager(new TestDeliveryContextManager());
+    public void setUp() {
+        mTestDeliveryContextManager = new TestDeliveryContextManager();
+        DeliveryContextManagers.registerDeliveryContextManager(mTestDeliveryContextManager);
         mBus = new Bus();
+    }
+
+    @After
+    public void cleanUp() {
+        DeliveryContextManagers.unregisterDeliveryContextManager(mTestDeliveryContextManager);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

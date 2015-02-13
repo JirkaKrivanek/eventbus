@@ -40,6 +40,11 @@ public class BusThread extends Thread {
         mDeliveryContextThread = new DeliveryContextThread(this);
     }
 
+    /**
+     * Starts the thread operation and waits until the thread executes and registers to the bus.
+     *
+     * @throws InterruptedException
+     */
     public void startAndWait() throws InterruptedException {
         start();
         mStarted.await();
@@ -101,10 +106,10 @@ public class BusThread extends Thread {
 
     /**
      * Initializes the thread for bus.
-     *
+     * <p/>
      * <dl><dt>Attention:</dt><dd>Must be called from within the context of the</dd></dl>
      */
-    void init() {
+    protected void init() {
         DeliveryContextManagerThread.registerDeliveryContext(mDeliveryContextThread);
         mBus.register(this);
         mStarted.countDown();
@@ -113,7 +118,7 @@ public class BusThread extends Thread {
     /**
      * Deinitializes th thread from bus.
      */
-    void done() {
+    protected void done() {
         mBus.unregister(this);
         DeliveryContextManagerThread.clearDeliveryContext();
     }
@@ -138,32 +143,15 @@ public class BusThread extends Thread {
     }
 
     /**
-     * Tries to handle one event posted to this thread.
-     *
-     * @return If the event was handled then {@code true} else {@code false}.
-     */
-    protected boolean tryToHandle() {
-        BusThreadEvent event;
-        synchronized (this) {
-            event = mEventsQueue.poll();
-            if (event == null) {
-                return false;
-            }
-        }
-        deliverEvent(event);
-        return true;
-    }
-
-    /**
      * Handles events posted to this thread until terminated.
      */
     void loop() {
-        while (!isInterrupted()) {
-            try {
+        try {
+            while (!isInterrupted()) {
                 handleOrWait();
-            } catch (InterruptedException e) {
-                break;
             }
+        } catch (InterruptedException e) {
+            // Intentionally empty: This exception fulfilled its purpose: Terminated the thread
         }
     }
 

@@ -260,10 +260,10 @@ public class MultiThreadedSubscriberTest {
 
 
     private static final int MESS_TOTAL_TIMEOUT_SEC        = 60;
-    private static final int MESS_TOTAL_COUNT              = 10000;
-    private static final int MESS_MAX_COUNT_PER_NEXT       = 1000;
-    private static final int MESS_MAX_COUNT_PER_BUS_THREAD = 100;
-    private static final int MESS_MAX_COUNT_PER_GEN_THREAD = 10;
+    private static final int MESS_TOTAL_COUNT              = 100;
+    private static final int MESS_MAX_COUNT_PER_NEXT       = 10;
+    private static final int MESS_MAX_COUNT_PER_BUS_THREAD = 1;
+    private static final int MESS_MAX_COUNT_PER_GEN_THREAD = 1;
     private static final int MESS_MAX_GEN_DELAY_MS         = 1;
 
     private final Random mRandom = new Random();

@@ -17,6 +17,7 @@ public class BusTimers extends Thread {
 
     private final Bus            mBus;
     private final List<BusTimer> mActiveTimers;
+    private final List<BusTimer> mTickedTimers;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -26,6 +27,7 @@ public class BusTimers extends Thread {
         super();
         mBus = bus;
         mActiveTimers = new ArrayList<>();
+        mTickedTimers = new ArrayList<>();
         setName("Bus timers");
         setDaemon(true);
         start();
@@ -61,6 +63,7 @@ public class BusTimers extends Thread {
                 }
             }
         } catch (InterruptedException e) {
+            // Intentionally empty: This exception fulfilled its purpose: Terminated the thread
         }
     }
 
@@ -100,14 +103,19 @@ public class BusTimers extends Thread {
     }
 
     private void fireEventOnExpiredTimers(long currentMs) {
+        mTickedTimers.clear();
         for (BusTimer busTimer : mActiveTimers) {
             long nextTickMs = busTimer.mNextTickMs;
             if (nextTickMs > 0) {
                 long tickInMs = nextTickMs - currentMs;
                 if (tickInMs <= 0) {
-                    busTimer.handleTimerTick(mBus);
+                    mTickedTimers.add(busTimer);
                 }
             }
         }
+        for (BusTimer busTimer : mTickedTimers) {
+            busTimer.handleTimerTick(mBus);
+        }
+        mTickedTimers.clear();
     }
 }
