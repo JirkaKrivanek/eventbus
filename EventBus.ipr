@@ -231,6 +231,13 @@
     </option>
     <option name="PREFERRED_PROJECT_CODE_STYLE" value="Gemalto" />
   </component>
+  <component name="ProjectDictionaryState">
+    <dictionary name="kk">
+      <words>
+        <w>ezio</w>
+      </words>
+    </dictionary>
+  </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
     <OptionsSetting value="true" id="Remove" />
