@@ -24,10 +24,13 @@ public class BusTimerSingleShotTest {
     }
 
     @Test
-    public void testGetEvent() throws Exception {
+    public void testSetGetEvent() throws Exception {
         BusTimers busTimers = mock(BusTimers.class);
         Object event = new Object();
         BusTimerSingleShot busTimer = new BusTimerSingleShot(busTimers, event, 0);
+        assertSame(event, busTimer.getEvent());
+        event = new Object();
+        busTimer.setEvent(event);
         assertSame(event, busTimer.getEvent());
     }
 

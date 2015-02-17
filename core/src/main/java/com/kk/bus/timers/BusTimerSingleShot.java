@@ -31,8 +31,43 @@ public class BusTimerSingleShot extends BusTimer {
         mDelayMs = delayMs;
     }
 
-    public Object getEvent() {
+    /**
+     * Retrieves the event to be delivered after the timer ticks.
+     *
+     * @return The event object.
+     */
+    public synchronized Object getEvent() {
         return mEvent;
+    }
+
+    /**
+     * Changes the event to be delivered when the timer ticks.
+     *
+     * @param event
+     *         The event.
+     * @return The self reference to allow the builder-like pattern.
+     */
+    public synchronized BusTimerSingleShot setEvent(Object event) {
+        if (mRunning) {
+            throw new IllegalStateException("Cannot change event on running timer");
+        }
+        mEvent = event;
+        return this;
+    }
+
+    /**
+     * Changes the delay in milliseconds after which the timer ticks.
+     *
+     * @param delayMs
+     *         The delay in milliseconds.
+     * @return The self reference to allow the builder-like pattern.
+     */
+    public synchronized BusTimerSingleShot setDelayMs(long delayMs) {
+        if (mRunning) {
+            throw new IllegalStateException("Cannot change delay on running timer");
+        }
+        mDelayMs = delayMs;
+        return this;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
