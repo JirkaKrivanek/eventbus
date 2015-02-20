@@ -13,7 +13,7 @@
           <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="Counter:"/>
+          <text value="Event counter:"/>
         </properties>
       </component>
       <component id="2b9de" class="javax.swing.JTextField" binding="mCounter">

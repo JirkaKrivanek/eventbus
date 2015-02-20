@@ -5,6 +5,7 @@ import com.kk.bus.DeliveryContext;
 import com.kk.bus.EventDeliverer;
 
 import java.awt.EventQueue;
+import java.util.List;
 
 /**
  * Delivery context for the java AWT dispatch thread.
@@ -27,11 +28,12 @@ public class DeliveryContextAwt extends DeliveryContext {
     }
 
     @Override
-    protected void requestCallProducerMethod(final EventDeliverer eventDeliverer) {
+    protected void requestCallProducerMethod(final EventDeliverer producerDeliverer,
+                                             final List<EventDeliverer> subscriberDeliverers) {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                callProducerMethod(eventDeliverer);
+                callProducerMethod(producerDeliverer, subscriberDeliverers);
             }
         });
     }
