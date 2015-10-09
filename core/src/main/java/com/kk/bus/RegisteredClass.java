@@ -46,10 +46,10 @@ class RegisteredClass {
                                                                    parameterTypes.length + " arguments. Methods must require a single argument.");
                     }
                     Class<?> eventType = parameterTypes[0];
-                    if (eventType.isInterface()) {
+                    /*if (eventType.isInterface()) {
                         throw new IllegalArgumentException("Method " + method + " has @Subscribe annotation on " + eventType +
                                                                    " which is an interface. Subscription must be on a concrete class type.");
-                    }
+                    }*/
                     if ((method.getModifiers() & Modifier.PUBLIC) == 0) {
                         throw new IllegalArgumentException("Method " + method + " has @Subscribe annotation on " + eventType +
                                                                    " but is not 'public'.");
@@ -73,10 +73,10 @@ class RegisteredClass {
                         throw new IllegalArgumentException("Method " + method + " has a return type of void. Must declare a non-void type.");
                     }
                     Class<?> eventType = method.getReturnType();
-                    if (eventType.isInterface()) {
+                    /*if (eventType.isInterface()) {
                         throw new IllegalArgumentException("Method " + method + " has @Produce annotation on " + eventType +
                                                                    " which is an interface. Producers must return a concrete class type.");
-                    }
+                    }*/
                     if (eventType.equals(Void.TYPE)) {
                         throw new IllegalArgumentException("Method " + method + " has @Produce annotation but has no return type.");
                     }
