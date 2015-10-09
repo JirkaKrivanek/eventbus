@@ -1586,29 +1586,6 @@ public class RegisteredClassTest {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    private static class ClassSubscriberErrorInterface {
-
-        @Subscribe
-        public void onEventA(EventInterface event) {
-        }
-    }
-
-    @Test
-    public void testClassSubscriberErrorInterface() throws Exception {
-        IllegalArgumentException exception = null;
-        try {
-            new RegisteredClass(ClassSubscriberErrorInterface.class);
-        } catch (IllegalArgumentException e) {
-            exception = e;
-        }
-        assertNotNull(exception);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
     private static class ClassSubscriberErrorPrivate {
 
         @Subscribe
@@ -1903,30 +1880,6 @@ public class RegisteredClassTest {
         IllegalArgumentException exception = null;
         try {
             new RegisteredClass(ClassProducerErrorVoidResult.class);
-        } catch (IllegalArgumentException e) {
-            exception = e;
-        }
-        assertNotNull(exception);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    private static class ClassProducerErrorInterfaceResult {
-
-        @Produce
-        public EventInterface produceEventA() {
-            return null;
-        }
-    }
-
-    @Test
-    public void testClassProducerErrorInterfaceResult() throws Exception {
-        IllegalArgumentException exception = null;
-        try {
-            new RegisteredClass(ClassProducerErrorInterfaceResult.class);
         } catch (IllegalArgumentException e) {
             exception = e;
         }
