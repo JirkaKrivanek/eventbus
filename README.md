@@ -1,4 +1,4 @@
-# EventBus
+# EventBus 1.2
 
 Yet another Event Bus
 
