@@ -116,6 +116,57 @@ public class BasicSubscriberTest {
         }
     }
 
+
+    public static class NormalDeliverySubscriberCC extends NormalDeliverySubscriberC {
+    }
+
+
+    public static class PrivateProtectedPackageProtectedNotCalled {
+
+        int eventCountA;
+        int eventCountB;
+        int eventCountC;
+
+        @Subscribe
+        private void onEventA(NormalDeliveryEventA event) {
+            eventCountA++;
+        }
+
+        @Subscribe
+        protected void onEventB(NormalDeliveryEventB event) {
+            eventCountB++;
+        }
+
+        @Subscribe
+        void onEventC(NormalDeliveryEventC event) {
+            eventCountC++;
+        }
+    }
+
+    @Test
+    public void privateProtectedPackageProtectedNotCalled() {
+        NormalDeliveryEventA eventA = new NormalDeliveryEventA();
+        NormalDeliveryEventB eventB = new NormalDeliveryEventB();
+        NormalDeliveryEventC eventC = new NormalDeliveryEventC();
+        PrivateProtectedPackageProtectedNotCalled subscriber = new PrivateProtectedPackageProtectedNotCalled();
+        mBus.register(subscriber);
+        mBus.post(eventA);
+        mBus.post(eventB);
+        mBus.post(eventC);
+        assertEquals(0, subscriber.eventCountA);
+        assertEquals(0, subscriber.eventCountB);
+        assertEquals(0, subscriber.eventCountC);
+    }
+
+    @Test
+    public void subscriberInSuperClass() {
+        NormalDeliveryEventC eventC = new NormalDeliveryEventC();
+        NormalDeliverySubscriberCC subscriberCC = new NormalDeliverySubscriberCC();
+        mBus.register(subscriberCC);
+        mBus.post(eventC);
+        assertEquals(subscriberCC.eventCount, 1);
+    }
+
     @Test
     public void normalDelivery() {
         NormalDeliveryEventA eventA = new NormalDeliveryEventA();

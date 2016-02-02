@@ -1601,7 +1601,7 @@ public class RegisteredClassTest {
         } catch (IllegalArgumentException e) {
             exception = e;
         }
-        assertNotNull(exception);
+        assertNull(exception);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1624,7 +1624,7 @@ public class RegisteredClassTest {
         } catch (IllegalArgumentException e) {
             exception = e;
         }
-        assertNotNull(exception);
+        assertNull(exception);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1647,7 +1647,7 @@ public class RegisteredClassTest {
         } catch (IllegalArgumentException e) {
             exception = e;
         }
-        assertNotNull(exception);
+        assertNull(exception);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1907,7 +1907,7 @@ public class RegisteredClassTest {
         } catch (IllegalArgumentException e) {
             exception = e;
         }
-        assertNotNull(exception);
+        assertNull(exception);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1931,7 +1931,7 @@ public class RegisteredClassTest {
         } catch (IllegalArgumentException e) {
             exception = e;
         }
-        assertNotNull(exception);
+        assertNull(exception);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1955,7 +1955,7 @@ public class RegisteredClassTest {
         } catch (IllegalArgumentException e) {
             exception = e;
         }
-        assertNotNull(exception);
+        assertNull(exception);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

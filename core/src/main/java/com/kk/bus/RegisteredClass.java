@@ -37,7 +37,7 @@ class RegisteredClass {
      *         The class for which the annotated methods have to be retrieved.
      */
     RegisteredClass(Class<?> registeredClass) {
-        for (Method method : registeredClass.getDeclaredMethods()) {
+        for (Method method : registeredClass.getMethods()) {
             if (!method.isBridge()) {
                 if (method.isAnnotationPresent(Subscribe.class)) {
                     Class<?>[] parameterTypes = method.getParameterTypes();

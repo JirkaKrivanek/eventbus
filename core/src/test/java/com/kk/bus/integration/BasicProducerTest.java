@@ -95,6 +95,9 @@ public class BasicProducerTest {
     private static class NormalDeliveryEventB {}
 
 
+    private static class NormalDeliveryEventC {}
+
+
     public static class NormalDeliveryProducerA {
 
         @Produce
@@ -102,6 +105,9 @@ public class BasicProducerTest {
             return new NormalDeliveryEventA();
         }
     }
+
+
+    public static class NormalDeliveryProducerAA extends NormalDeliveryProducerA {}
 
 
     public static class NormalDeliverySubscriberA {
@@ -189,6 +195,72 @@ public class BasicProducerTest {
         public void onEventB(NormalDeliveryEventB event) {
             deliveredEventCountB++;
         }
+    }
+
+
+    public static class PrivateProtectedPackageProtectedProducersNotCalled {
+
+        int producedEventCountA;
+        int producedEventCountB;
+        int producedEventCountC;
+
+        int subscribedEventCountA;
+        int subscribedEventCountB;
+        int subscribedEventCountC;
+
+        @Produce
+        private NormalDeliveryEventA produceEventA() {
+            producedEventCountA++;
+            return new NormalDeliveryEventA();
+        }
+
+        @Subscribe
+        public void onEventA(NormalDeliveryEventA event) {
+            subscribedEventCountA++;
+        }
+
+        @Produce
+        protected NormalDeliveryEventB produceEventB() {
+            producedEventCountB++;
+            return new NormalDeliveryEventB();
+        }
+
+        @Subscribe
+        public void onEventB(NormalDeliveryEventB event) {
+            subscribedEventCountB++;
+        }
+
+        @Produce
+        NormalDeliveryEventC produceEventC() {
+            producedEventCountC++;
+            return new NormalDeliveryEventC();
+        }
+
+        @Subscribe
+        public void onEventC(NormalDeliveryEventC event) {
+            subscribedEventCountC++;
+        }
+    }
+
+    @Test
+    public void privateProtectedPackageProtectedProducersNotCalled() {
+        PrivateProtectedPackageProtectedProducersNotCalled producer = new PrivateProtectedPackageProtectedProducersNotCalled();
+        mBus.register(producer);
+        assertEquals(0, producer.producedEventCountA);
+        assertEquals(0, producer.producedEventCountB);
+        assertEquals(0, producer.producedEventCountC);
+        assertEquals(0, producer.subscribedEventCountA);
+        assertEquals(0, producer.subscribedEventCountB);
+        assertEquals(0, producer.subscribedEventCountC);
+    }
+
+    @Test
+    public void producerInSuperClass() {
+        NormalDeliveryProducerAA producerAA = new NormalDeliveryProducerAA();
+        NormalDeliverySubscriberA subscriberA = new NormalDeliverySubscriberA();
+        mBus.register(producerAA);
+        mBus.register(subscriberA);
+        assertEquals(subscriberA.eventCount, 1);
     }
 
     @Test
