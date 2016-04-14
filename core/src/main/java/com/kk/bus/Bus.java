@@ -8,6 +8,11 @@ package com.kk.bus;
  */
 public class Bus {
 
+    /**
+     * Denotes the broadcast subscriber and/or event.
+     */
+    public static final int BROADCAST_TOKEN = 0;
+
     private final RegisteredEvents mRegisteredEvents = new RegisteredEvents();
 
     /**
@@ -22,7 +27,7 @@ public class Bus {
      * @param objectToRegister
      *         The object to register to the event bus.
      */
-    public void register(Object objectToRegister) {
+    public void register(final Object objectToRegister) {
         mRegisteredEvents.register(this, objectToRegister);
     }
 
@@ -38,7 +43,7 @@ public class Bus {
      * @param objectToUnregister
      *         The object to unregister from the event bus.
      */
-    public void unregister(Object objectToUnregister) {
+    public void unregister(final Object objectToUnregister) {
         mRegisteredEvents.unregister(objectToUnregister);
     }
 
@@ -51,7 +56,23 @@ public class Bus {
      * @param event
      *         The event to post to the event bus.
      */
-    public void post(Object event) {
+    public void post(final Object event) {
         mRegisteredEvents.post(event);
+    }
+
+    /**
+     * Posts an event to the event bus.
+     * <p/>
+     * The event will be delivered to all registered objects. The delivery will occurs on the {@link DeliveryContext} on
+     * which the {@link #register(Object)} method was called for that delivery context.
+     *
+     * @param event
+     *         The event to post to the event bus.
+     * @param token
+     *         The token to which the event shall be delivered (subscribers filtering). If {@link Bus#BROADCAST_TOKEN}
+     *         then the event is delivered to ALL subscribers irrespectively to the tokens.
+     */
+    public void post(final Object event, final int token) {
+        mRegisteredEvents.post(event, token);
     }
 }

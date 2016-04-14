@@ -1,6 +1,7 @@
 package com.kk.bus;
 
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,19 +25,26 @@ class RegisteredEvents {
     private final RegisteredClasses mRegisteredClasses = new RegisteredClasses();
 
     /**
-     * Registered events.
+     * Registered subscribed events.
+     * <p/>
+     * Keys are subscribers of the events, values are registered event objects.
+     */
+    private final Map<Subscriber, RegisteredEvent> mRegisteredSubscribedEvents = new HashMap<>();
+
+    /**
+     * Registered produced events.
      * <p/>
      * Keys are classes of the events, values are registered event objects.
      */
-    private final Map<Class<?>, RegisteredEvent> mRegisteredEvents = new HashMap<>();
+    private final Map<Class<?>, RegisteredEvent> mRegisteredProducedEvents = new HashMap<>();
 
 
-    private class ProducerSubscribers {
+    private static class ProducerSubscribers {
 
-        EventDeliverer       producer;
-        List<EventDeliverer> subscribers;
+        final EventDeliverer       producer;
+        final List<EventDeliverer> subscribers;
 
-        public ProducerSubscribers(EventDeliverer producer, List<EventDeliverer> subscribers) {
+        ProducerSubscribers(EventDeliverer producer, List<EventDeliverer> subscribers) {
             this.producer = producer;
             this.subscribers = subscribers;
         }
@@ -51,39 +59,39 @@ class RegisteredEvents {
      *         The object to register to the bus.
      */
     void register(Bus bus, Object objectToRegister) {
-        RegisteredClass registeredClass = mRegisteredClasses.getRegisteredClass(objectToRegister, true);
-        DeliveryContext deliveryContext = DeliveryContextManagers.getCurrentDeliveryContext();
-        Set<Class<?>> subscribedEvents = registeredClass.getSubscribedEventClasses();
-        Set<Class<?>> producedEvents = registeredClass.getProducedEventClasses();
+        final RegisteredClass registeredClass = mRegisteredClasses.getRegisteredClass(objectToRegister, true);
+        final DeliveryContext deliveryContext = DeliveryContextManagers.getCurrentDeliveryContext();
+        final Set<Subscriber> eventSubscribers = registeredClass.getEventSubscribers();
+        final Set<Class<?>> producedEventClasses = registeredClass.getProducedEventClasses();
 
         // Registers subscriber methods
-        if (subscribedEvents != null) {
-            for (Class<?> eventClass : subscribedEvents) {
+        if (eventSubscribers != null) {
+            for (final Subscriber eventSubscriber : eventSubscribers) {
                 RegisteredEvent registeredEvent;
                 synchronized (this) {
-                    registeredEvent = mRegisteredEvents.get(eventClass);
+                    registeredEvent = mRegisteredSubscribedEvents.get(eventSubscriber);
                     if (registeredEvent == null) {
                         registeredEvent = new RegisteredEvent();
-                        mRegisteredEvents.put(eventClass, registeredEvent);
+                        mRegisteredSubscribedEvents.put(eventSubscriber, registeredEvent);
                     }
                 }
-                Set<Method> subscriberMethods = registeredClass.getSubscriberMethods(eventClass);
+                final Set<Method> subscriberMethods = registeredClass.getSubscriberMethods(eventSubscriber);
                 registeredEvent.register(bus, objectToRegister, subscriberMethods, deliveryContext);
             }
         }
 
         // Register producer methods
-        if (producedEvents != null) {
-            for (Class<?> eventClass : producedEvents) {
+        if (producedEventClasses != null) {
+            for (Class<?> producedEventClass : producedEventClasses) {
                 RegisteredEvent registeredEvent;
                 synchronized (this) {
-                    registeredEvent = mRegisteredEvents.get(eventClass);
+                    registeredEvent = mRegisteredProducedEvents.get(producedEventClass);
                     if (registeredEvent == null) {
                         registeredEvent = new RegisteredEvent();
-                        mRegisteredEvents.put(eventClass, registeredEvent);
+                        mRegisteredProducedEvents.put(producedEventClass, registeredEvent);
                     }
                 }
-                Method producerMethod = registeredClass.getProducerMethod(eventClass);
+                final Method producerMethod = registeredClass.getProducerMethod(producedEventClass);
                 registeredEvent.register(bus, objectToRegister, producerMethod, deliveryContext);
             }
         }
@@ -93,38 +101,39 @@ class RegisteredEvents {
 
         // First collect the producers of the just being registered class
         // - but only those which produce events of interest by some other registered subscribing object
-        if (producedEvents != null) {
-            for (Class<?> producedEventClass : producedEvents) {
+        if (producedEventClasses != null) {
+            for (final Class<?> producedEventClass : producedEventClasses) {
                 // For each produced event class
                 // Collect event deliverers
                 // - For produced event class or any super class
                 // - Having any subscriber method set
-                List<EventDeliverer> eventSubscribers = null;
+                List<EventDeliverer> eventDeliverers = null;
                 synchronized (this) {
-                    for (Class<?> subscribedEventClass : mRegisteredEvents.keySet()) {
-                        if (subscribedEventClass.isAssignableFrom(producedEventClass)) {
-                            RegisteredEvent registeredEvent = mRegisteredEvents.get(subscribedEventClass);
-                            eventSubscribers = registeredEvent.retrieveEventDeliverersHavingAnySubscribers(
-                                    eventSubscribers,
+                    for (final Subscriber subscriber : mRegisteredSubscribedEvents.keySet()) {
+                        if (subscriber.getEventClass().isAssignableFrom(producedEventClass)) {
+                            final RegisteredEvent registeredEvent = mRegisteredSubscribedEvents.get(subscriber);
+                            eventDeliverers = registeredEvent.retrieveEventDeliverersHavingAnySubscribers(
+                                    eventDeliverers,
                                     null);
                         }
                     }
                 }
                 // Only if found any event deliverers with subscribers
-                if (eventSubscribers != null) {
+                if (eventDeliverers != null) {
                     // Collect the event deliverer for producer class
                     // - For the object being registered
                     // - Having the producer method set
                     EventDeliverer eventProducer;
                     synchronized (this) {
-                        eventProducer = mRegisteredEvents.get(producedEventClass).getEventDelivererWithProducerForRegisteredObject(
-                                objectToRegister);
+                        eventProducer = mRegisteredProducedEvents.get(producedEventClass)
+                                                                 .getEventDelivererWithProducerForRegisteredObject(
+                                                                         objectToRegister);
                     }
                     if (eventProducer != null) {
                         if (eventProducerSubscribers == null) {
                             eventProducerSubscribers = new ArrayList<>();
                         }
-                        eventProducerSubscribers.add(new ProducerSubscribers(eventProducer, eventSubscribers));
+                        eventProducerSubscribers.add(new ProducerSubscribers(eventProducer, eventDeliverers));
                     }
                 }
             }
@@ -132,27 +141,27 @@ class RegisteredEvents {
 
         // Then collect the producers from all other registered objects
         // - except the currently being registered one
-        // - for all event classes subscribed by the currently being registered one
+        // - for all event classes subscribed by the currently being registered object
         // - the subscriber is only the object currently being registered
-        if (subscribedEvents != null) {
-            for (Class<?> subscribedEventClass : subscribedEvents) {
+        if (eventSubscribers != null) {
+            for (final Subscriber eventSubscriber : eventSubscribers) {
                 synchronized (this) {
-                    for (Class<?> producedEventClass : mRegisteredEvents.keySet()) {
-                        if (subscribedEventClass.isAssignableFrom(producedEventClass)) {
-                            RegisteredEvent re = mRegisteredEvents.get(producedEventClass);
-                            List<EventDeliverer> eventProducers = re.getEventDeliverersHavingAnyProducer(null,
-                                                                                                         objectToRegister);
+                    for (final Class<?> producedEventClass : mRegisteredProducedEvents.keySet()) {
+                        if (eventSubscriber.getEventClass().isAssignableFrom(producedEventClass)) {
+                            RegisteredEvent re = mRegisteredProducedEvents.get(producedEventClass);
+                            final List<EventDeliverer> eventProducers = re.getEventDeliverersHavingAnyProducer(null,
+                                                                                                               objectToRegister);
                             if (eventProducers != null) {
-                                re = mRegisteredEvents.get(subscribedEventClass);
-                                List<EventDeliverer> eventSubscribers = re.retrieveEventDeliverersHavingAnySubscribers(
+                                re = mRegisteredSubscribedEvents.get(eventSubscriber);
+                                final List<EventDeliverer> eventDeliverers = re.retrieveEventDeliverersHavingAnySubscribers(
                                         null,
                                         objectToRegister);
-                                for (EventDeliverer eventProducer : eventProducers) {
+                                for (final EventDeliverer eventProducer : eventProducers) {
                                     if (eventProducerSubscribers == null) {
                                         eventProducerSubscribers = new ArrayList<>();
                                     }
                                     eventProducerSubscribers.add(new ProducerSubscribers(eventProducer,
-                                                                                         eventSubscribers));
+                                                                                         eventDeliverers));
                                 }
                             }
                         }
@@ -163,7 +172,7 @@ class RegisteredEvents {
 
         // Finally call the production
         if (eventProducerSubscribers != null) {
-            for (ProducerSubscribers producerSubscribers : eventProducerSubscribers) {
+            for (final ProducerSubscribers producerSubscribers : eventProducerSubscribers) {
                 producerSubscribers.producer.requestCallProducerMethod(producerSubscribers.subscribers);
             }
         }
@@ -175,17 +184,17 @@ class RegisteredEvents {
      * @param objectToUnregister
      *         The object to unregister from the bus.
      */
-    void unregister(Object objectToUnregister) {
-        RegisteredClass registeredClass = mRegisteredClasses.getRegisteredClass(objectToUnregister, false);
+    void unregister(final Object objectToUnregister) {
+        final RegisteredClass registeredClass = mRegisteredClasses.getRegisteredClass(objectToUnregister, false);
 
         // Unregisters subscriber methods
         if (registeredClass != null) {
-            Set<Class<?>> subscribedEvents = registeredClass.getSubscribedEventClasses();
+            final Set<Subscriber> subscribedEvents = registeredClass.getEventSubscribers();
             if (subscribedEvents != null) {
-                for (Class<?> eventClass : subscribedEvents) {
+                for (final Subscriber eventSubscriber : subscribedEvents) {
                     RegisteredEvent registeredEvent;
                     synchronized (this) {
-                        registeredEvent = mRegisteredEvents.get(eventClass);
+                        registeredEvent = mRegisteredSubscribedEvents.get(eventSubscriber);
                     }
                     if (registeredEvent != null) {
                         registeredEvent.unregister(objectToUnregister);
@@ -199,18 +208,58 @@ class RegisteredEvents {
      * Posts the event to be delivered to the bus subscribers.
      *
      * @param event
-     *         The event object to post.
+     *         The event object to post. Never {@code null}.
      */
-    void post(Object event) {
-        List<RegisteredEvent> registeredEvents = new ArrayList<>();
+    void post(final Object event) {
+        int subToken = Bus.BROADCAST_TOKEN;
+        final Class<?> clazz = event.getClass();
+        for (final Method method : clazz.getMethods()) {
+            if (method.isAnnotationPresent(Token.class)) {
+                try {
+                    final boolean needsAccessBoost = !method.isAccessible();
+                    if (needsAccessBoost) {
+                        method.setAccessible(true);
+                    }
+                    try {
+                        subToken = (Integer) method.invoke(event);
+                    } finally {
+                        if (needsAccessBoost) {
+                            method.setAccessible(false);
+                        }
+                    }
+                } catch (IllegalAccessException e) {
+                    throw new IllegalArgumentException("Could not retrieve token", e);
+                } catch (InvocationTargetException e) {
+                    throw new IllegalArgumentException("Could not retrieve token", e);
+                }
+                break;
+            }
+        }
+        post(event, subToken);
+    }
+
+    /**
+     * Posts the event to be delivered to the bus subscribers with specified token.
+     *
+     * @param event
+     *         The event object to post.
+     * @param token
+     *         The token to which the event shall be delivered (subscribers filtering). If {@link Bus#BROADCAST_TOKEN}
+     *         then the event is delivered to ALL subscribers irrespectively to the tokens.
+     */
+    void post(final Object event, final int token) {
+        final List<RegisteredEvent> registeredEvents = new ArrayList<>();
         synchronized (this) {
-            for (Class<?> clazz : mRegisteredEvents.keySet()) {
-                if (clazz.isInstance(event)) {
-                    registeredEvents.add(mRegisteredEvents.get(clazz));
+            for (final Subscriber subscriber : mRegisteredSubscribedEvents.keySet()) {
+                final int subToken = subscriber.getToken();
+                if (token == Bus.BROADCAST_TOKEN || subToken == Bus.BROADCAST_TOKEN || subToken == token) {
+                    if (subscriber.getEventClass().isInstance(event)) {
+                        registeredEvents.add(mRegisteredSubscribedEvents.get(subscriber));
+                    }
                 }
             }
         }
-        for (RegisteredEvent registeredEvent : registeredEvents) {
+        for (final RegisteredEvent registeredEvent : registeredEvents) {
             registeredEvent.post(event);
         }
     }

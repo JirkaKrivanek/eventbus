@@ -1,4 +1,4 @@
-# EventBus 1.2
+# EventBus 1.3
 
 Yet another Event Bus
 
@@ -6,6 +6,7 @@ The planned features are:
 - Core event bus library
   - Subscribers - done
   - Producers - done
+  - Tokens for subscribers (token can either be posted or supplied by the event method annotated with @Token)
 - Multi threading support with delivering on the same thread which registered - done
 - Timed events posting with repeated and cancel option - done (not completely covered by unit tests)
 - Android main UI thread support - done

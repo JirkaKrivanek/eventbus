@@ -21,7 +21,7 @@ class RegisteredClass {
      * <p/>
      * Key is an event type class. Value is the set of methods handling that event
      */
-    private Map<Class<?>, Set<Method>> mSubscriberMethods = null;
+    private Map<Subscriber, Set<Method>> mSubscriberMethods = null;
 
     /**
      * Registered producer methods.
@@ -36,16 +36,16 @@ class RegisteredClass {
      * @param registeredClass
      *         The class for which the annotated methods have to be retrieved.
      */
-    RegisteredClass(Class<?> registeredClass) {
+    RegisteredClass(final Class<?> registeredClass) {
         for (Method method : registeredClass.getMethods()) {
             if (!method.isBridge()) {
                 if (method.isAnnotationPresent(Subscribe.class)) {
-                    Class<?>[] parameterTypes = method.getParameterTypes();
+                    final Class<?>[] parameterTypes = method.getParameterTypes();
                     if (parameterTypes.length != 1) {
                         throw new IllegalArgumentException("Method " + method + " has @Subscribe annotation but requires " +
                                                                    parameterTypes.length + " arguments. Methods must require a single argument.");
                     }
-                    Class<?> eventType = parameterTypes[0];
+                    final Class<?> eventType = parameterTypes[0];
                     /*if (eventType.isInterface()) {
                         throw new IllegalArgumentException("Method " + method + " has @Subscribe annotation on " + eventType +
                                                                    " which is an interface. Subscription must be on a concrete class type.");
@@ -57,14 +57,16 @@ class RegisteredClass {
                     if (mSubscriberMethods == null) {
                         mSubscriberMethods = new HashMap<>();
                     }
-                    Set<Method> methods = mSubscriberMethods.get(eventType);
+                    final Subscribe annotation = method.getAnnotation(Subscribe.class);
+                    final Subscriber subscriber = new Subscriber(eventType, annotation.token());
+                    Set<Method> methods = mSubscriberMethods.get(subscriber);
                     if (methods == null) {
                         methods = new HashSet<>();
-                        mSubscriberMethods.put(eventType, methods);
+                        mSubscriberMethods.put(subscriber, methods);
                     }
                     methods.add(method);
                 } else if (method.isAnnotationPresent(Produce.class)) {
-                    Class<?>[] parameterTypes = method.getParameterTypes();
+                    final Class<?>[] parameterTypes = method.getParameterTypes();
                     if (parameterTypes.length != 0) {
                         throw new IllegalArgumentException("Method " + method + "has @Produce annotation but requires " + parameterTypes.length +
                                                                    " arguments. Methods must require zero arguments.");
@@ -72,7 +74,7 @@ class RegisteredClass {
                     if (method.getReturnType() == Void.class) {
                         throw new IllegalArgumentException("Method " + method + " has a return type of void. Must declare a non-void type.");
                     }
-                    Class<?> eventType = method.getReturnType();
+                    final Class<?> eventType = method.getReturnType();
                     /*if (eventType.isInterface()) {
                         throw new IllegalArgumentException("Method " + method + " has @Produce annotation on " + eventType +
                                                                    " which is an interface. Producers must return a concrete class type.");
@@ -113,9 +115,9 @@ class RegisteredClass {
     /**
      * Retrieves the set of subscribed event classes.
      *
-     * @return The set of subscribed event classes.
+     * @return The set of subscribers.
      */
-    Set<Class<?>> getSubscribedEventClasses() {
+    Set<Subscriber> getEventSubscribers() {
         if (mSubscriberMethods != null) {
             return mSubscriberMethods.keySet();
         }
@@ -125,13 +127,13 @@ class RegisteredClass {
     /**
      * Retrieves the subscriber methods for specified event class.
      *
-     * @param forClass
-     *         The class for which to retrieve the set of subscribing methods.
+     * @param forSubscriber
+     *         The subscriber for which to retrieve the set of subscribing methods.
      * @return The set of subscribing methods or {@code null} if no methods subscribed.
      */
-    Set<Method> getSubscriberMethods(Class<?> forClass) {
+    Set<Method> getSubscriberMethods(final Subscriber forSubscriber) {
         if (mSubscriberMethods != null) {
-            return mSubscriberMethods.get(forClass);
+            return mSubscriberMethods.get(forSubscriber);
         }
         return null;
     }

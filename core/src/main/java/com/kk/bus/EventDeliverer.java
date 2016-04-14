@@ -169,7 +169,17 @@ public class EventDeliverer {
         if (o != null && m != null) {
             for (Method method : m) {
                 try {
-                    method.invoke(o, event);
+                    final boolean needsAccessBoost = !method.isAccessible();
+                    if (needsAccessBoost) {
+                        method.setAccessible(true);
+                    }
+                    try {
+                        method.invoke(o, event);
+                    } finally {
+                        if (needsAccessBoost) {
+                            method.setAccessible(false);
+                        }
+                    }
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e); // Not really nice but effective
                 } catch (InvocationTargetException e) {

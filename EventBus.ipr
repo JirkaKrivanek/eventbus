@@ -89,16 +89,6 @@
             <option value="$PROJECT_DIR$/core" />
           </set>
         </option>
-        <option name="myModules">
-          <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/android" />
-            <option value="$PROJECT_DIR$/androidDemo" />
-            <option value="$PROJECT_DIR$/awt" />
-            <option value="$PROJECT_DIR$/awtDemo" />
-            <option value="$PROJECT_DIR$/core" />
-          </set>
-        </option>
       </GradleProjectSettings>
     </option>
   </component>
@@ -252,12 +242,12 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/EventBus.iml" filepath="$PROJECT_DIR$/EventBus.iml" />
-      <module fileurl="file://$PROJECT_DIR$/android/android.iml" filepath="$PROJECT_DIR$/android/android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/androidDemo/androidDemo.iml" filepath="$PROJECT_DIR$/androidDemo/androidDemo.iml" />
-      <module fileurl="file://$PROJECT_DIR$/awt/awt.iml" filepath="$PROJECT_DIR$/awt/awt.iml" />
-      <module fileurl="file://$PROJECT_DIR$/awtDemo/awtDemo.iml" filepath="$PROJECT_DIR$/awtDemo/awtDemo.iml" />
-      <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/EventBus.iml" filepath="$PROJECT_DIR$/.idea/modules/EventBus.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/android.iml" filepath="$PROJECT_DIR$/.idea/modules/android/android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/androidDemo/androidDemo.iml" filepath="$PROJECT_DIR$/.idea/modules/androidDemo/androidDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/awt/awt.iml" filepath="$PROJECT_DIR$/.idea/modules/awt/awt.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/awtDemo/awtDemo.iml" filepath="$PROJECT_DIR$/.idea/modules/awtDemo/awtDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/core.iml" filepath="$PROJECT_DIR$/.idea/modules/core/core.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" assert-keyword="true" jdk-15="true" project-jdk-name="1.7" project-jdk-type="JavaSDK">
@@ -265,15 +255,6 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
-  </component>
-  <component name="RunConfigurationProducerService">
-    <option name="ignoredProducers">
-      <set>
-        <option value="org.jetbrains.plugins.gradle.execution.test.runner.AllInPackageGradleConfigurationProducer" />
-        <option value="org.jetbrains.plugins.gradle.execution.test.runner.TestClassGradleConfigurationProducer" />
-        <option value="org.jetbrains.plugins.gradle.execution.test.runner.TestMethodGradleConfigurationProducer" />
-      </set>
-    </option>
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />

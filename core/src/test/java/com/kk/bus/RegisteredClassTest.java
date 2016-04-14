@@ -495,23 +495,23 @@ public class RegisteredClassTest {
     @Test
     public void getSubscribedMethods() {
         RegisteredClass registeredClass = new RegisteredClass(GetSubscribedMethods_None.class);
-        Set<Method> methods = registeredClass.getSubscriberMethods(EventA.class);
+        Set<Method> methods = registeredClass.getSubscriberMethods(new Subscriber(EventA.class, 0));
         assertNull(methods);
-        methods = registeredClass.getSubscriberMethods(EventB.class);
+        methods = registeredClass.getSubscriberMethods(new Subscriber(EventB.class, 0));
         assertNull(methods);
         //
         registeredClass = new RegisteredClass(GetSubscribedMethods_One.class);
-        methods = registeredClass.getSubscriberMethods(EventA.class);
+        methods = registeredClass.getSubscriberMethods(new Subscriber(EventA.class, 0));
         assertNotNull(methods);
         assertEquals(1, methods.size());
-        methods = registeredClass.getSubscriberMethods(EventB.class);
+        methods = registeredClass.getSubscriberMethods(new Subscriber(EventB.class, 0));
         assertNull(methods);
         //
         registeredClass = new RegisteredClass(GetSubscribedMethods_Two.class);
-        methods = registeredClass.getSubscriberMethods(EventA.class);
+        methods = registeredClass.getSubscriberMethods(new Subscriber(EventA.class, 0));
         assertNotNull(methods);
         assertEquals(1, methods.size());
-        methods = registeredClass.getSubscriberMethods(EventB.class);
+        methods = registeredClass.getSubscriberMethods(new Subscriber(EventB.class, 0));
         assertNotNull(methods);
         assertEquals(1, methods.size());
     }
@@ -519,7 +519,7 @@ public class RegisteredClassTest {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Methods: getSubscribedEventClasses()
+    // Methods: getEventSubscribers()
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -737,20 +737,20 @@ public class RegisteredClassTest {
     @Test
     public void getSubscribedEventClasses() {
         RegisteredClass registeredClass = new RegisteredClass(ClassGetSubscribedEventClasses_None.class);
-        assertNull(registeredClass.getSubscribedEventClasses());
+        assertNull(registeredClass.getEventSubscribers());
         //
         registeredClass = new RegisteredClass(ClassGetSubscribedEventClasses_One.class);
-        Set<Class<?>> classes = registeredClass.getSubscribedEventClasses();
-        assertNotNull(classes);
-        assertEquals(1, classes.size());
-        assertTrue(classes.contains(EventA.class));
+        Set<Subscriber> subscribers = registeredClass.getEventSubscribers();
+        assertNotNull(subscribers);
+        assertEquals(1, subscribers.size());
+        assertTrue(subscribers.contains(new Subscriber(EventA.class, 0)));
         //
         registeredClass = new RegisteredClass(ClassGetSubscribedEventClasses_Two.class);
-        classes = registeredClass.getSubscribedEventClasses();
-        assertNotNull(classes);
-        assertEquals(2, classes.size());
-        assertTrue(classes.contains(EventA.class));
-        assertTrue(classes.contains(EventB.class));
+        subscribers = registeredClass.getEventSubscribers();
+        assertNotNull(subscribers);
+        assertEquals(2, subscribers.size());
+        assertTrue(subscribers.contains(new Subscriber(EventA.class, 0)));
+        assertTrue(subscribers.contains(new Subscriber(EventB.class, 0)));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1384,9 +1384,9 @@ public class RegisteredClassTest {
     public void testClassSubscriberEventA() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassSubscriberEventA.class);
         assertTrue(registeredClass.hasAnySubscribers());
-        assertNotNull(registeredClass.getSubscribedEventClasses());
-        assertEquals(1, registeredClass.getSubscribedEventClasses().size());
-        assertEquals(1, registeredClass.getSubscriberMethods(EventA.class).size());
+        assertNotNull(registeredClass.getEventSubscribers());
+        assertEquals(1, registeredClass.getEventSubscribers().size());
+        assertEquals(1, registeredClass.getSubscriberMethods(new Subscriber(EventA.class, 0)).size());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1408,9 +1408,9 @@ public class RegisteredClassTest {
     public void testClassSubscriberEventFA() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassSubscriberEventFA.class);
         assertTrue(registeredClass.hasAnySubscribers());
-        assertNotNull(registeredClass.getSubscribedEventClasses());
-        assertEquals(1, registeredClass.getSubscribedEventClasses().size());
-        assertEquals(1, registeredClass.getSubscriberMethods(EventA.class).size());
+        assertNotNull(registeredClass.getEventSubscribers());
+        assertEquals(1, registeredClass.getEventSubscribers().size());
+        assertEquals(1, registeredClass.getSubscriberMethods(new Subscriber(EventA.class, 0)).size());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1433,9 +1433,9 @@ public class RegisteredClassTest {
     public void testClassSubscriberEventAA() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassSubscriberEventAA.class);
         assertTrue(registeredClass.hasAnySubscribers());
-        assertNotNull(registeredClass.getSubscribedEventClasses());
-        assertEquals(1, registeredClass.getSubscribedEventClasses().size());
-        assertEquals(2, registeredClass.getSubscriberMethods(EventA.class).size());
+        assertNotNull(registeredClass.getEventSubscribers());
+        assertEquals(1, registeredClass.getEventSubscribers().size());
+        assertEquals(2, registeredClass.getSubscriberMethods(new Subscriber(EventA.class, 0)).size());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1461,9 +1461,9 @@ public class RegisteredClassTest {
     public void testClassSubscriberEventFAA() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassSubscriberEventFAA.class);
         assertTrue(registeredClass.hasAnySubscribers());
-        assertNotNull(registeredClass.getSubscribedEventClasses());
-        assertEquals(1, registeredClass.getSubscribedEventClasses().size());
-        assertEquals(2, registeredClass.getSubscriberMethods(EventA.class).size());
+        assertNotNull(registeredClass.getEventSubscribers());
+        assertEquals(1, registeredClass.getEventSubscribers().size());
+        assertEquals(2, registeredClass.getSubscriberMethods(new Subscriber(EventA.class, 0)).size());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1486,10 +1486,10 @@ public class RegisteredClassTest {
     public void testClassSubscriberEventAB() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassSubscriberEventAB.class);
         assertTrue(registeredClass.hasAnySubscribers());
-        assertNotNull(registeredClass.getSubscribedEventClasses());
-        assertEquals(2, registeredClass.getSubscribedEventClasses().size());
-        assertEquals(1, registeredClass.getSubscriberMethods(EventA.class).size());
-        assertEquals(1, registeredClass.getSubscriberMethods(EventB.class).size());
+        assertNotNull(registeredClass.getEventSubscribers());
+        assertEquals(2, registeredClass.getEventSubscribers().size());
+        assertEquals(1, registeredClass.getSubscriberMethods(new Subscriber(EventA.class, 0)).size());
+        assertEquals(1, registeredClass.getSubscriberMethods(new Subscriber(EventB.class, 0)).size());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1515,10 +1515,10 @@ public class RegisteredClassTest {
     public void testClassSubscriberEventFAB() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassSubscriberEventFAB.class);
         assertTrue(registeredClass.hasAnySubscribers());
-        assertNotNull(registeredClass.getSubscribedEventClasses());
-        assertEquals(2, registeredClass.getSubscribedEventClasses().size());
-        assertEquals(1, registeredClass.getSubscriberMethods(EventA.class).size());
-        assertEquals(1, registeredClass.getSubscriberMethods(EventB.class).size());
+        assertNotNull(registeredClass.getEventSubscribers());
+        assertEquals(2, registeredClass.getEventSubscribers().size());
+        assertEquals(1, registeredClass.getSubscriberMethods(new Subscriber(EventA.class, 0)).size());
+        assertEquals(1, registeredClass.getSubscriberMethods(new Subscriber(EventB.class, 0)).size());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1552,10 +1552,10 @@ public class RegisteredClassTest {
     public void testClassSubscriberEventFAABB() throws Exception {
         RegisteredClass registeredClass = new RegisteredClass(ClassSubscriberEventFAABB.class);
         assertTrue(registeredClass.hasAnySubscribers());
-        assertNotNull(registeredClass.getSubscribedEventClasses());
-        assertEquals(2, registeredClass.getSubscribedEventClasses().size());
-        assertEquals(2, registeredClass.getSubscriberMethods(EventA.class).size());
-        assertEquals(2, registeredClass.getSubscriberMethods(EventB.class).size());
+        assertNotNull(registeredClass.getEventSubscribers());
+        assertEquals(2, registeredClass.getEventSubscribers().size());
+        assertEquals(2, registeredClass.getSubscriberMethods(new Subscriber(EventA.class, 0)).size());
+        assertEquals(2, registeredClass.getSubscriberMethods(new Subscriber(EventB.class, 0)).size());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
