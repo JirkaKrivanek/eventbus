@@ -10,7 +10,7 @@ import com.kk.bus.DeliveryContextManagers;
  *
  * @author Jiri Krivanek
  */
-class DeliveryContextManagerThread implements DeliveryContextManager<DeliveryContextThread> {
+public class DeliveryContextManagerThread implements DeliveryContextManager<DeliveryContextThread> {
 
     /**
      * The local variable of the current thread.

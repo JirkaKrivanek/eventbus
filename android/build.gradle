@@ -1,13 +1,12 @@
 apply plugin: 'java'
 
-sourceCompatibility = 1.6
 version = '1.1'
 
 repositories {
     mavenCentral()
 }
 
-def androidSdkVersion = 21
+def androidSdkVersion = 23
 Properties properties = new Properties()
 properties.load(new File(rootProject.projectDir, "local.properties").newDataInputStream())
 def androidSdkRoot = properties.getProperty("sdk.dir")
@@ -16,5 +15,5 @@ File androidJarFile = new File(androidSdkRoot, "platforms/android-" + androidSdk
 dependencies {
     compile project(':core')
     compile files(androidJarFile)
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
 }
